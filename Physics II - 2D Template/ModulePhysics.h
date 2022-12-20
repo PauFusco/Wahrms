@@ -4,7 +4,7 @@
 #include "p2List.h"
 
 // Define Physics Globals here
-
+// meters to pixels and reverse (transformation and coeficient)
 
 // b2Vec2 equivalent
 class wVec2 {
@@ -67,8 +67,8 @@ public:
 
 private:
 	unsigned int mass;
-	unsigned int bounceQuoef;
-	int x, y;
+	unsigned int elasticCoef;
+	p2Point<float> bPos; // Position in meters
 	wVec2 speed;
 };
 
@@ -84,7 +84,7 @@ public:
 	wBody* floorBody;
 	
 	wVec2 gravity;
-	float frictionQuoef;
+	float frictionCoef;
 
 };
 
@@ -100,6 +100,8 @@ public:
 	update_status PostUpdate();
 	bool CleanUp();
 	
+	wBody* CreateCircle(float r, p2Point<int> pos);
+
 	void CheckCollision(); // Check collisions of all the elements in the body list
 	
 	void addBodyToList(wBody* body); // Add body to the list to be able to check collisions
