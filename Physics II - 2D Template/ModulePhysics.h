@@ -9,8 +9,8 @@
 // b2Vec2 equivalent
 class wVec2 {
 public:
-	wVec2();
-	~wVec2();
+	wVec2() {}
+	~wVec2() {}
 	
 	wVec2(float x, float y) : x(x), y(y) {}
 public:
