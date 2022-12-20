@@ -68,6 +68,21 @@ private:
 	wVec2 speed;
 };
 
+class Floor
+{
+public:
+	Floor();
+	~Floor();
+
+	Floor(wVec2 gravity, float friction);
+	
+public:
+	wVec2 gravity;
+	float frictionQuoef;
+	int x, y, width, height;
+
+};
+
 
 class ModulePhysics : public Module
 {
@@ -80,12 +95,15 @@ public:
 	update_status PostUpdate();
 	bool CleanUp();
 	
-	void CheckCollision();
-	void addBodyToList(wBody* body);
+	void CheckCollision(); // Check collisions of all the elements in the body list
+	
+	void addBodyToList(wBody* body); // Add body to the list to be able to check collisions
 
-	p2List<wBody*>* Bodies;
+	void CreateFloor(); // Create rectangle on the bottom on the screen and put it in the list
+	
+
 
 private:
-
+	p2List<wBody*>* Bodies;
 	bool debug;
 };
