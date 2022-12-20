@@ -52,10 +52,13 @@ public:
 	wBody();
 	~wBody();
 
-	
+	// Setters
 	void SetLinearVelocity(wVec2 v);
-	void SetPosititon(const wVec2& position);
-	void GetPosition(int& x, int& y) const;
+	void SetPosition(p2Point<float> position);
+	
+	// Getters
+	wVec2 GetSpeed();
+	p2Point<float> GetPosition();
 	
 	void OnCollision(wBody* Body2);
 
@@ -72,13 +75,36 @@ private:
 	wVec2 speed;
 };
 
+// wBody Functions
+void wBody::SetLinearVelocity(wVec2 v)
+{
+	speed = v;
+}
+void wBody::SetPosition(p2Point<float> position)
+{
+	bPos = position;
+}
+wVec2 wBody::GetSpeed()
+{
+	return speed;
+}
+p2Point<float> wBody::GetPosition()
+{
+	return bPos;
+}
+void wBody::OnCollision(wBody* Body2)
+{
+
+}
+
 class Floor
 {
 public:
 	Floor();
 	~Floor();
 
-	Floor(wVec2 gravity, float friction);
+	Floor(wVec2 gravity, float friction, wBody* floorBody) :
+		  gravity(gravity), frictionCoef(friction), floorBody(floorBody){}
 	
 public:
 	wBody* floorBody;
@@ -87,7 +113,6 @@ public:
 	float frictionCoef;
 
 };
-
 
 class ModulePhysics : public Module
 {
