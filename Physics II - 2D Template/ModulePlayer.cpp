@@ -1,6 +1,7 @@
 #include "Globals.h"
 #include "Application.h"
 #include "ModulePlayer.h"
+#include "ModulePhysics.h"
 
 ModulePlayer::ModulePlayer(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
@@ -13,6 +14,13 @@ ModulePlayer::~ModulePlayer()
 bool ModulePlayer::Start()
 {
 	LOG("Loading player");
+
+	p2Point<float> position;
+	position.x = 5;
+	position.y = 5;
+
+	plBody = App->physics->CreateCircle(5, position);
+
 	return true;
 }
 

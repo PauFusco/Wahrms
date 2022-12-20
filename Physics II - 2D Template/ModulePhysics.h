@@ -2,6 +2,7 @@
 #include "Module.h"
 #include "Globals.h"
 #include "p2List.h"
+#include "p2Point.h"
 
 // Define Physics Globals here
 // meters to pixels and reverse (transformation and coeficient)
@@ -55,6 +56,10 @@ public:
 	// Setters
 	void SetLinearVelocity(wVec2 v);
 	void SetPosition(p2Point<float> position);
+	void SetWidth(int width);
+	void SetHeight(int height);
+	
+	
 	
 	// Getters
 	wVec2 GetSpeed();
@@ -69,8 +74,8 @@ public:
 	wBodyClass wclass;
 
 private:
-	unsigned int mass;
-	unsigned int elasticCoef;
+	unsigned int mass = 1;
+	unsigned int elasticCoef = 1;
 	p2Point<float> bPos; // Position in meters
 	wVec2 speed;
 };
@@ -104,7 +109,7 @@ public:
 	bool CleanUp();
 	
 public:
-	wBody* CreateCircle(float r, p2Point<int> pos);
+	wBody* CreateCircle(float r, p2Point<float> pos);
 
 	void CheckCollision(); // Check collisions of all the elements in the body list
 	
@@ -114,5 +119,5 @@ public:
 
 private:
 	p2List<wBody*>* Bodies;
-	bool debug;
+	bool debug = true;
 };

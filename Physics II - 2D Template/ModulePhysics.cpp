@@ -2,6 +2,7 @@
 #include "Application.h"
 #include "ModulePhysics.h"
 #include "math.h"
+#include "p2Point.h"
 
 ModulePhysics::ModulePhysics(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
@@ -35,6 +36,24 @@ update_status ModulePhysics::PostUpdate()
 	if(!debug)
 		return UPDATE_CONTINUE;
 
+	
+	
+	if (Bodies != nullptr)
+	{
+		p2List_item<wBody*>* bodies;
+		for (bodies = Bodies->getFirst(); bodies != NULL; bodies = bodies->next)
+		{
+			LOG("this exixts");
+			p2Point<float> place = bodies->data->GetPosition();
+			//bodies->data->width;
+
+			App->renderer->DrawCircle(place.x, place.y, bodies->data->width, 255, 255, 255);
+			App->renderer->DrawCircle(place.x, place.y, 1, 255, 0, 0);
+
+		}
+	}
+	
+
 	return UPDATE_CONTINUE;
 }
 
@@ -67,4 +86,31 @@ p2Point<float> wBody::GetPosition()
 void wBody::OnCollision(wBody* Body2)
 {
 
+}
+
+
+wBody* ModulePhysics::CreateCircle(float r, p2Point<float> pos)
+{
+	wBody* wbody = new wBody();
+	//wBody* wbody = nullptr;
+
+	wbody->wclass = wBodyClass::CIRCLE;
+	wbody->SetPosition(pos);
+	wbody->SetLinearVelocity(wVec2(0, 0));
+	wbody->width = r * 0.5;
+	wbody->height = r * 0.5;
+	wbody->ctype = ColliderType::UNKNOWN;
+	wbody->btype = bodyType::DYNAMIC;
+	
+	addBodyToList(wbody);
+
+	return wbody;
+}
+
+void ModulePhysics::addBodyToList(wBody* body)
+{
+	if (body != nullptr)
+	{
+		Bodies->add(body);
+	}
 }

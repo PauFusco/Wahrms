@@ -5,6 +5,7 @@
 #include "p2Point.h"
 #include "ModulePhysics.h"
 
+
 struct Object
 {
 	SDL_Texture* graphic;
@@ -26,5 +27,5 @@ public:
 
 public:
 	wBody* plBody;
-	p2Point<int> pos; // Render Position (pixels)
+	p2Point<float> pos; // Render Position (pixels)
 };
