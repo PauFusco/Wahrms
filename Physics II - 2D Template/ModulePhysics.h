@@ -62,9 +62,13 @@ public:
 public:
 	int width, height;
 	ColliderType ctype;
+	bodyType btype;
+	wBodyClass wclass;
 
 private:
-	float mass, x, y;
+	unsigned int mass;
+	unsigned int bounceQuoef;
+	int x, y;
 	wVec2 speed;
 };
 
@@ -77,9 +81,10 @@ public:
 	Floor(wVec2 gravity, float friction);
 	
 public:
+	wBody* floorBody;
+	
 	wVec2 gravity;
 	float frictionQuoef;
-	int x, y, width, height;
 
 };
 
@@ -91,7 +96,7 @@ public:
 	~ModulePhysics();
 
 	bool Start();
-	update_status PreUpdate();
+	update_status PreUpdate(); // Apply ALL forces to ALL bodies (use list)
 	update_status PostUpdate();
 	bool CleanUp();
 	
@@ -99,9 +104,7 @@ public:
 	
 	void addBodyToList(wBody* body); // Add body to the list to be able to check collisions
 
-	void CreateFloor(); // Create rectangle on the bottom on the screen and put it in the list
-	
-
+	//void CreateFloor(); // Create rectangle on the bottom on the screen and put it in the list (use class??)
 
 private:
 	p2List<wBody*>* Bodies;
