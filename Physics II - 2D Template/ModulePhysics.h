@@ -1,6 +1,7 @@
 #pragma once
 #include "Module.h"
 #include "Globals.h"
+#include "p2List.h"
 
 // Define Physics Globals here
 
@@ -25,6 +26,13 @@ enum bodyType
 	UNKNOWN
 };
 
+enum class wBodyClass
+{
+	CIRCLE,
+	SQUARE,
+	UNKOWN
+};
+
 enum class ColliderType
 {
 	PLAYER,
@@ -36,6 +44,8 @@ enum class ColliderType
 	UNKNOWN
 };
 
+
+// Collider of a wBody is itself
 class wBody
 {
 public:
@@ -47,6 +57,8 @@ public:
 	void SetPosititon(const wVec2& position);
 	void GetPosition(int& x, int& y) const;
 	
+	void OnCollision(wBody* Body2);
+
 public:
 	int width, height;
 	ColliderType ctype;
@@ -67,6 +79,11 @@ public:
 	update_status PreUpdate();
 	update_status PostUpdate();
 	bool CleanUp();
+	
+	void CheckCollision();
+	void addBodyToList(wBody* body);
+
+	p2List<wBody*>* Bodies;
 
 private:
 
