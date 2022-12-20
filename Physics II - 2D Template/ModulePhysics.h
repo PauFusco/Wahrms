@@ -100,6 +100,7 @@ public:
 	update_status PostUpdate();
 	bool CleanUp();
 	
+public:
 	wBody* CreateCircle(float r, p2Point<int> pos);
 
 	void CheckCollision(); // Check collisions of all the elements in the body list
