@@ -75,28 +75,6 @@ private:
 	wVec2 speed;
 };
 
-// wBody Functions
-void wBody::SetLinearVelocity(wVec2 v)
-{
-	speed = v;
-}
-void wBody::SetPosition(p2Point<float> position)
-{
-	bPos = position;
-}
-wVec2 wBody::GetSpeed()
-{
-	return speed;
-}
-p2Point<float> wBody::GetPosition()
-{
-	return bPos;
-}
-void wBody::OnCollision(wBody* Body2)
-{
-
-}
-
 class Floor
 {
 public:
@@ -104,7 +82,7 @@ public:
 	~Floor();
 
 	Floor(wVec2 gravity, float friction, wBody* floorBody) :
-		  gravity(gravity), frictionCoef(friction), floorBody(floorBody){}
+		  gravity(gravity), frictionCoef(friction), floorBody(floorBody) {}
 	
 public:
 	wBody* floorBody;

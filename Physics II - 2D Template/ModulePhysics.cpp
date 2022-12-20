@@ -47,3 +47,24 @@ bool ModulePhysics::CleanUp()
 	return true;
 }
 
+// wBody Functions
+void wBody::SetLinearVelocity(wVec2 v)
+{
+	speed = v;
+}
+void wBody::SetPosition(p2Point<float> position)
+{
+	bPos = position;
+}
+wVec2 wBody::GetSpeed()
+{
+	return speed;
+}
+p2Point<float> wBody::GetPosition()
+{
+	return bPos;
+}
+void wBody::OnCollision(wBody* Body2)
+{
+
+}

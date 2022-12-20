@@ -25,6 +25,6 @@ public:
 	bool CleanUp();
 
 public:
-	wBody plBody;
+	wBody* plBody;
 	p2Point<int> pos; // Render Position (pixels)
 };
