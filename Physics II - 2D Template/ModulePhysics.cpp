@@ -17,7 +17,7 @@ ModulePhysics::~ModulePhysics()
 bool ModulePhysics::Start()
 {
 	LOG("Creating Physics 2D environment");
-
+	Bodies = new p2List<wBody*>;
 	return true;
 }
 
@@ -35,26 +35,22 @@ update_status ModulePhysics::PostUpdate()
 
 	if(!debug)
 		return UPDATE_CONTINUE;
-
+	
 	if (Bodies != nullptr)
 	{
 		p2List_item<wBody*>* bodies;
 		for (bodies = Bodies->getFirst(); bodies != NULL; bodies = bodies->next)
 		{
-			LOG("this exixts");
+			LOG("this body exists");
 			p2Point<float> place = bodies->data->GetPosition();
-			//bodies->data->width;
-
-			App->renderer->DrawCircle(place.x, place.y, bodies->data->width, 255, 255, 255);
-			App->renderer->DrawCircle(place.x, place.y, 1, 255, 0, 0);
-
+			if (bodies->data->wclass == wBodyClass::CIRCLE) {
+				App->renderer->DrawCircle(METERS_TO_PIXELS(place.x), METERS_TO_PIXELS(place.y), METERS_TO_PIXELS(bodies->data->width), 255, 255, 255);
+			}
 		}
 	}
 	
-
 	return UPDATE_CONTINUE;
 }
-
 
 // Called before quitting
 bool ModulePhysics::CleanUp()
@@ -63,6 +59,32 @@ bool ModulePhysics::CleanUp()
 
 	return true;
 }
+
+wBody* ModulePhysics::CreateCircle(float r, p2Point<float> pos)
+{
+	wBody* wbody = new wBody();
+
+	wbody->wclass = wBodyClass::CIRCLE;
+	wbody->SetPosition(pos);
+	wbody->SetLinearVelocity(wVec2(0, 0));
+	wbody->width = r * 0.5;
+	wbody->height = r * 0.5;
+	wbody->ctype = ColliderType::UNKNOWN;
+	wbody->btype = bodyType::DYNAMIC;
+
+	addBodyToList(wbody);
+
+	return wbody;
+}
+
+void ModulePhysics::addBodyToList(wBody* body)
+{
+	if (body != nullptr)
+	{
+		Bodies->add(body);
+	}
+}
+
 
 // wBody Functions
 void wBody::SetLinearVelocity(wVec2 v)
@@ -84,31 +106,4 @@ p2Point<float> wBody::GetPosition()
 void wBody::OnCollision(wBody* Body2)
 {
 
-}
-
-
-wBody* ModulePhysics::CreateCircle(float r, p2Point<float> pos)
-{
-	wBody* wbody = new wBody();
-	//wBody* wbody = nullptr;
-
-	wbody->wclass = wBodyClass::CIRCLE;
-	wbody->SetPosition(pos);
-	wbody->SetLinearVelocity(wVec2(0, 0));
-	wbody->width = r * 0.5;
-	wbody->height = r * 0.5;
-	wbody->ctype = ColliderType::UNKNOWN;
-	wbody->btype = bodyType::DYNAMIC;
-	
-	addBodyToList(wbody);
-
-	return wbody;
-}
-
-void ModulePhysics::addBodyToList(wBody* body)
-{
-	if (body != nullptr)
-	{
-		Bodies->add(body);
-	}
 }

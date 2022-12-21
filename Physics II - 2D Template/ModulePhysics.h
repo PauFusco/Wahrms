@@ -5,7 +5,16 @@
 #include "p2Point.h"
 
 // Define Physics Globals here
-// meters to pixels and reverse (transformation and coeficient)
+#define GRAVITY_X 0.0f
+#define GRAVITY_Y -23.0f
+
+// Meters to pixels and reverse (transformation and coeficient)
+#define PIXELS_PER_METER 50.0f // if touched change METER_PER_PIXEL too
+#define METER_PER_PIXEL 0.02f // this is 1 / PIXELS_PER_METER !
+
+#define METERS_TO_PIXELS(m) ((int) floor(PIXELS_PER_METER * m))
+#define PIXEL_TO_METERS(p)  ((float) METER_PER_PIXEL * p)
+
 
 // b2Vec2 equivalent
 class wVec2 {
@@ -56,11 +65,10 @@ public:
 	// Setters
 	void SetLinearVelocity(wVec2 v);
 	void SetPosition(p2Point<float> position);
+	
 	void SetWidth(int width);
 	void SetHeight(int height);
-	
-	
-	
+		
 	// Getters
 	wVec2 GetSpeed();
 	p2Point<float> GetPosition();
