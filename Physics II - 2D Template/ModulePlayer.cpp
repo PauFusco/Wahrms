@@ -22,6 +22,9 @@ bool ModulePlayer::Start()
 
 	plBody = App->physics->CreateCircle(2, position);
 
+	position.x = 8;
+	//plBody2 = App->physics->CreateCircle(3, position);
+
 	return true;
 }
 
@@ -66,6 +69,61 @@ update_status ModulePlayer::Update()
 		vel.x = 0;
 		plBody->SetLinearVelocity(vel);
 	}
+
+
+	if (plBody2 == nullptr)
+	{
+		p2Point<float> position;
+		position.x = 5;
+		position.y = 1;
+
+
+		if (App->input->GetKey(SDL_SCANCODE_D) == KEY_DOWN)
+		{
+			plBody2 = App->physics->CreateCircle(3, position);
+			wVec2 vel;
+			vel.y = 0;
+			vel.x = 1;
+			plBody2->SetLinearVelocity(vel);
+		}
+		if (App->input->GetKey(SDL_SCANCODE_A) == KEY_DOWN)
+		{
+			plBody2 = App->physics->CreateCircle(3, position);
+			wVec2 vel;
+			vel.y = 0;
+			vel.x = -1;
+			plBody2->SetLinearVelocity(vel);
+		}
+		if (App->input->GetKey(SDL_SCANCODE_W) == KEY_DOWN)
+		{
+			plBody2 = App->physics->CreateCircle(3, position);
+			wVec2 vel;
+			vel.y = -1;
+			vel.x = 0;
+			plBody2->SetLinearVelocity(vel);
+		}
+		if (App->input->GetKey(SDL_SCANCODE_S) == KEY_DOWN)
+		{
+			plBody2 = App->physics->CreateCircle(3, position);
+			wVec2 vel;
+			vel.y = 1;
+			vel.x = 0;
+			plBody2->SetLinearVelocity(vel);
+		}
+
+		
+	}
+
+	if (plBody2 != nullptr)
+	{
+		if (App->input->GetKey(SDL_SCANCODE_E) == KEY_DOWN)
+		{
+			App->physics->destroyBody(plBody2);
+			
+		}
+	}
+	
+	
 
 
 	return UPDATE_CONTINUE;

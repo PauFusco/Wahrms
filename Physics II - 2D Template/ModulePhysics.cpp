@@ -29,7 +29,7 @@ update_status ModulePhysics::PreUpdate()
 		p2List_item<wBody*>* bodies;
 		for (bodies = Bodies->getFirst(); bodies != NULL; bodies = bodies->next)
 		{
-			LOG("this body exists");
+			
 			p2Point<float> place = bodies->data->GetPosition();
 			if (bodies->data->btype == bodyType::DYNAMIC) {
 				
@@ -68,12 +68,14 @@ update_status ModulePhysics::PostUpdate()
 	
 	if (Bodies != nullptr)
 	{
+		LOG("the size of the list is %f", sizeof(Bodies));
 		p2List_item<wBody*>* bodies;
 		for (bodies = Bodies->getFirst(); bodies != NULL; bodies = bodies->next)
 		{
 			
 			p2Point<float> place = bodies->data->GetPosition();
-			if (bodies->data->wclass == wBodyClass::CIRCLE) {
+			if (bodies->data->wclass == wBodyClass::CIRCLE) 
+			{
 				App->renderer->DrawCircle(METERS_TO_PIXELS(place.x), METERS_TO_PIXELS(place.y), METERS_TO_PIXELS(bodies->data->width), 255, 255, 255);
 				App->renderer->DrawCircle(METERS_TO_PIXELS(place.x), METERS_TO_PIXELS(place.y), 1, 255, 0, 0);
 			}
@@ -88,7 +90,17 @@ bool ModulePhysics::CleanUp()
 {
 	LOG("Destroying physics world");
 
+	p2List_item<wBody*>* bodies;
+	for (bodies = Bodies->getFirst(); bodies != NULL; bodies = bodies->next)
+	{
+		
 
+		
+		//Bodies->del(bodies);
+			
+		
+		
+	}
 
 	return true;
 }
@@ -111,6 +123,23 @@ wBody* ModulePhysics::CreateCircle(float r, p2Point<float> pos)
 	return wbody;
 }
 
+void ModulePhysics::destroyBody(wBody* body)
+{
+	p2List_item<wBody*>* bodies;
+	for (bodies = Bodies->getFirst(); bodies != NULL; bodies = bodies->next)
+	{
+		if (bodies->data == body)
+		{
+			
+			
+			Bodies->del(bodies);
+			delete body;
+			body->~wBody();
+			return;
+		}
+	}
+}
+
 void ModulePhysics::addBodyToList(wBody* body)
 {
 	if (body != nullptr)
@@ -121,6 +150,15 @@ void ModulePhysics::addBodyToList(wBody* body)
 
 
 // wBody Functions
+wBody::wBody()
+{
+
+}
+wBody::~wBody()
+{
+
+}
+
 void wBody::SetLinearVelocity(wVec2 v)
 {
 	speed = v;

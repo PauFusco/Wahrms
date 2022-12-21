@@ -59,7 +59,7 @@ enum class ColliderType
 class wBody
 {
 public:
-	wBody(){}
+	wBody();
 	~wBody();
 
 	// Setters
@@ -124,6 +124,8 @@ public:
 	void CheckCollision(); // Check collisions of all the elements in the body list
 	
 	void addBodyToList(wBody* body); // Add body to the list to be able to check collisions
+
+	void destroyBody(wBody* body);
 
 	//void CreateFloor(); // Create rectangle on the bottom on the screen and put it in the list (use class??)
 
