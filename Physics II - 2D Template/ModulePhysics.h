@@ -50,7 +50,7 @@ enum class ColliderType
 class wBody
 {
 public:
-	wBody();
+	wBody(){}
 	~wBody();
 
 	// Setters

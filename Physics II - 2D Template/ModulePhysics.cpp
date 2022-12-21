@@ -36,8 +36,6 @@ update_status ModulePhysics::PostUpdate()
 	if(!debug)
 		return UPDATE_CONTINUE;
 
-	
-	
 	if (Bodies != nullptr)
 	{
 		p2List_item<wBody*>* bodies;
