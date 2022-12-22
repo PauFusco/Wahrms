@@ -52,6 +52,9 @@ update_status ModulePhysics::PreUpdate()
 				bodies->data->SetPosition(newPos);
 			}
 		}
+
+		CheckCollision();
+		
 	}
 
 	return UPDATE_CONTINUE;
@@ -68,7 +71,7 @@ update_status ModulePhysics::PostUpdate()
 	
 	if (Bodies != nullptr)
 	{
-		LOG("the size of the list is %f", sizeof(Bodies));
+		
 		p2List_item<wBody*>* bodies;
 		for (bodies = Bodies->getFirst(); bodies != NULL; bodies = bodies->next)
 		{
@@ -76,8 +79,8 @@ update_status ModulePhysics::PostUpdate()
 			p2Point<float> place = bodies->data->GetPosition();
 			if (bodies->data->wclass == wBodyClass::CIRCLE) 
 			{
-				App->renderer->DrawCircle(METERS_TO_PIXELS(place.x), METERS_TO_PIXELS(place.y), METERS_TO_PIXELS(bodies->data->width), 255, 255, 255);
-				App->renderer->DrawCircle(METERS_TO_PIXELS(place.x), METERS_TO_PIXELS(place.y), 1, 255, 0, 0);
+				App->renderer->DrawCircle(place.x, place.y, bodies->data->width, 255, 255, 255);
+				App->renderer->DrawCircle(place.x, place.y, 1, 255, 0, 0);
 			}
 		}
 	}
@@ -90,8 +93,11 @@ bool ModulePhysics::CleanUp()
 {
 	LOG("Destroying physics world");
 
+	Bodies->clear();
+	delete Bodies;
+
 	p2List_item<wBody*>* bodies;
-	for (bodies = Bodies->getFirst(); bodies != NULL; bodies = bodies->next)
+	//for (bodies = Bodies->getFirst(); bodies != NULL; bodies = bodies->next)
 	{
 		
 
@@ -108,13 +114,15 @@ bool ModulePhysics::CleanUp()
 wBody* ModulePhysics::CreateCircle(float r, p2Point<float> pos)
 {
 	wBody* wbody = new wBody();
+	pos.x = METERS_TO_PIXELS(pos.x);
+	pos.y = METERS_TO_PIXELS(pos.y);
 
 	wbody->wclass = wBodyClass::CIRCLE;
 	wbody->SetPosition(pos);
 	wbody->SetLinearVelocity(wVec2(0, 0));
-	wbody->SetLinearAcceleration(wVec2(0, 0.01));
-	wbody->width = r * 0.5;
-	wbody->height = r * 0.5;
+	wbody->SetLinearAcceleration(wVec2(0, 1.0));
+	wbody->width = METERS_TO_PIXELS(r * 0.5);
+	wbody->height = METERS_TO_PIXELS(r * 0.5);
 	wbody->ctype = ColliderType::UNKNOWN;
 	wbody->btype = bodyType::DYNAMIC;
 
@@ -148,11 +156,65 @@ void ModulePhysics::addBodyToList(wBody* body)
 	}
 }
 
+void ::ModulePhysics::CheckCollision()
+{
+	p2List<wBody*> aux;
+
+	p2List_item<wBody*>* bodies;
+	p2List_item<wBody*>* bodies2;
+	for (bodies = Bodies->getFirst(); bodies != NULL; bodies = bodies->next)
+	{
+		if (bodies->data->IsCollisionListener)
+		{
+			aux.add(bodies->data);
+		}
+	}
+
+	for (bodies = aux.getFirst(); bodies != NULL; bodies = bodies->next)
+	{
+		
+		for (bodies2 = Bodies->getFirst(); bodies2 != NULL; bodies2 = bodies2->next)
+		{
+			if (bodies->data != bodies2->data)
+			{
+				
+				if (bodies->data->wclass == wBodyClass::CIRCLE)
+				{
+					if (bodies2->data->wclass == wBodyClass::CIRCLE)
+					{
+						
+						float radius = bodies->data->width + bodies2->data->width;
+						float distance = bodies->data->GetPosition().DistanceTo(bodies2->data->GetPosition());
+
+						if (distance < radius)
+						{
+							bodies->data->OnCollision(bodies2->data);
+						}
+						
+					}
+					else if (bodies2->data->wclass == wBodyClass::SQUARE)
+					{
+
+					}
+				}
+				else if (bodies->data->wclass == wBodyClass::SQUARE)
+				{
+
+				}
+			}
+		}
+	}
+
+
+
+	aux.clear();
+}
+
 
 // wBody Functions
 wBody::wBody()
 {
-
+	
 }
 wBody::~wBody()
 {
@@ -185,5 +247,5 @@ p2Point<float> wBody::GetPosition()
 }
 void wBody::OnCollision(wBody* Body2)
 {
-
+	LOG("This is a collision");
 }

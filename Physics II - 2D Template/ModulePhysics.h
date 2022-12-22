@@ -77,11 +77,14 @@ public:
 	
 	void OnCollision(wBody* Body2);
 
+
 public:
 	int width, height;
 	ColliderType ctype;
 	bodyType btype;
 	wBodyClass wclass;
+
+	bool IsCollisionListener = false;
 
 private:
 	unsigned int mass = 1;
