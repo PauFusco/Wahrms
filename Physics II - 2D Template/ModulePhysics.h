@@ -59,6 +59,7 @@ enum class ColliderType
 class wBody
 {
 public:
+
 	wBody(){}
 	~wBody(){}
 
@@ -134,7 +135,9 @@ public:
 
 	void destroyBody(wBody* body);
 
+
 	void CreateFloor(); // Create rectangle on the bottom on the screen and put it in the list (use class??)
+
 
 private:
 	p2List<wBody*>* Bodies;

@@ -83,6 +83,7 @@ update_status ModulePhysics::PostUpdate()
 			p2Point<float> place = bodies->data->GetPosition();
 			if (bodies->data->wclass == wBodyClass::CIRCLE) 
 			{
+
 				App->renderer->DrawCircle(place.x, place.y, bodies->data->GetWidth(), 255, 255, 255);
 				//App->renderer->DrawCircle(place.x, place.y, 1, 255, 0, 0);
 			}
@@ -96,6 +97,7 @@ update_status ModulePhysics::PostUpdate()
 				thisRect.h = bodies->data->GetHeight();
 
 				App->renderer->DrawQuad(thisRect, 255, 255, 255, 255, true, true);
+
 
 			}
 
@@ -242,8 +244,10 @@ wBody* ModulePhysics::CreateCircle(float r, p2Point<float> pos)
 	wbody->SetPosition(pos);
 	wbody->SetLinearVelocity(wVec2(0, 0));
 	wbody->SetLinearAcceleration(wVec2(0, 1.0));
+
 	wbody->SetWidth(METERS_TO_PIXELS(r * 0.5));
 	wbody->SetHeight(METERS_TO_PIXELS(r * 0.5));
+
 	wbody->ctype = ColliderType::UNKNOWN;
 	wbody->btype = bodyType::DYNAMIC;
 
@@ -251,6 +255,7 @@ wBody* ModulePhysics::CreateCircle(float r, p2Point<float> pos)
 
 	return wbody;
 }
+
 
 void wBody::SetLinearVelocity(wVec2 v)
 {
