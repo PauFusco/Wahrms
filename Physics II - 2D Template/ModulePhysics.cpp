@@ -84,7 +84,7 @@ update_status ModulePhysics::PostUpdate()
 			if (bodies->data->wclass == wBodyClass::CIRCLE) 
 			{
 
-				App->renderer->DrawCircle(place.x, place.y, bodies->data->width, 255, 255, 255);
+				App->renderer->DrawCircle(place.x, place.y, bodies->data->GetWidth(), 255, 255, 255);
 				App->renderer->DrawCircle(place.x, place.y, 1, 255, 0, 0);
 
 			}
