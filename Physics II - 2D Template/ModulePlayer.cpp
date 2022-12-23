@@ -70,6 +70,13 @@ update_status ModulePlayer::Update()
 		vel.x = 0;
 		plBody->SetLinearVelocity(vel);
 	}
+	if (App->input->GetKey(SDL_SCANCODE_V) == KEY_DOWN)
+	{
+		LOG("The x velocity is: %f", plBody->GetSpeed().x);
+		LOG("The y velocity is: %f", plBody->GetSpeed().y);
+		LOG("X %f", plBody->GetPosition().x);
+		LOG("Y %f", plBody->GetPosition().y);
+	}
 
 
 	if (plBody2 == nullptr)
@@ -99,7 +106,7 @@ update_status ModulePlayer::Update()
 		{
 			plBody2 = App->physics->CreateCircle(1, position);
 			wVec2 vel;
-			vel.y = -50;
+			vel.y = -0;
 			vel.x = 0;
 			plBody2->SetLinearVelocity(vel);
 		}
@@ -113,6 +120,7 @@ update_status ModulePlayer::Update()
 		}
 
 		
+		
 	}
 
 	if (plBody2 != nullptr)
@@ -124,7 +132,7 @@ update_status ModulePlayer::Update()
 		}
 	}
 
-	if (App->input->GetKey(SDL_SCANCODE_1) == KEY_DOWN)
+	if (App->input->GetKey(SDL_SCANCODE_1) == KEY_REPEAT)
 	{
 
 		p2Point<float> position;
@@ -147,6 +155,9 @@ update_status ModulePlayer::Update()
 		}
 		
 	}
+	
+	
+
 
 	return UPDATE_CONTINUE;
 }
