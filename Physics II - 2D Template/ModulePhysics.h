@@ -12,7 +12,7 @@
 #define PIXELS_PER_METER 50.0f // if touched change METER_PER_PIXEL too
 #define METER_PER_PIXEL 0.02f // this is 1 / PIXELS_PER_METER !
 
-#define METERS_TO_PIXELS(m) ((int) floor(PIXELS_PER_METER * m))
+#define METERS_TO_PIXELS(m) ((int) (PIXELS_PER_METER * m))
 #define PIXEL_TO_METERS(p)  ((float) METER_PER_PIXEL * p)
 
 
@@ -29,7 +29,7 @@ public:
 
 // This defines whether the bodies will react
 // to collisions with movementor they will stay static
-enum bodyType
+enum class bodyType
 {
 	DYNAMIC,
 	STATIC,
@@ -59,27 +59,31 @@ enum class ColliderType
 class wBody
 {
 public:
-	wBody();
-	~wBody();
+
+	wBody(){}
+	~wBody(){}
 
 	// Setters
 	void SetLinearVelocity(wVec2 v);
 	void SetLinearAcceleration(wVec2 a);
 	void SetPosition(p2Point<float> position);
 	
-	void SetWidth(int width);
-	void SetHeight(int height);
+	void SetWidth(int iwidth);
+	void SetHeight(int iheight);
 		
 	// Getters
 	wVec2 GetSpeed();
 	wVec2 GetAcceleration();
 	p2Point<float> GetPosition();
 	
+	int GetWidth();
+	int GetHeight();
+
 	void OnCollision(wBody* Body2);
 
 
 public:
-	int width, height;
+	
 	ColliderType ctype;
 	bodyType btype;
 	wBodyClass wclass;
@@ -87,6 +91,7 @@ public:
 	bool IsCollisionListener = false;
 
 private:
+	int width, height;
 	unsigned int mass = 1;
 	unsigned int elasticCoef = 1;
 	p2Point<float> bPos; // Position in meters
@@ -130,7 +135,9 @@ public:
 
 	void destroyBody(wBody* body);
 
-	//void CreateFloor(); // Create rectangle on the bottom on the screen and put it in the list (use class??)
+
+	void CreateFloor(); // Create rectangle on the bottom on the screen and put it in the list (use class??)
+
 
 private:
 	p2List<wBody*>* Bodies;
