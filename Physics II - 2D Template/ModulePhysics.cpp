@@ -80,7 +80,7 @@ update_status ModulePhysics::PostUpdate()
 			if (bodies->data->wclass == wBodyClass::CIRCLE) 
 			{
 				App->renderer->DrawCircle(place.x, place.y, bodies->data->width, 255, 255, 255);
-				//App->renderer->DrawCircle(place.x, place.y, 1, 255, 0, 0);
+				App->renderer->DrawCircle(place.x, place.y, 1, 255, 0, 0);
 			}
 		}
 	}
@@ -120,7 +120,7 @@ wBody* ModulePhysics::CreateCircle(float r, p2Point<float> pos)
 	wbody->wclass = wBodyClass::CIRCLE;
 	wbody->SetPosition(pos);
 	wbody->SetLinearVelocity(wVec2(0, 0));
-	wbody->SetLinearAcceleration(wVec2(0, 1.0));
+	wbody->SetLinearAcceleration(wVec2(0, 0.0));
 	wbody->width = METERS_TO_PIXELS(r * 0.5);
 	wbody->height = METERS_TO_PIXELS(r * 0.5);
 	wbody->ctype = ColliderType::UNKNOWN;
@@ -233,6 +233,10 @@ void wBody::SetPosition(p2Point<float> position)
 {
 	bPos = position;
 }
+unsigned int wBody::GetMass()
+{
+	return mass;
+}
 wVec2 wBody::GetSpeed()
 {
 	return speed;
@@ -247,5 +251,37 @@ p2Point<float> wBody::GetPosition()
 }
 void wBody::OnCollision(wBody* Body2)
 {
-	LOG("This is a collision");
+	if (wclass == wBodyClass::CIRCLE && Body2->wclass == wBodyClass::CIRCLE)
+	{
+
+		LOG("%f", GetSpeed().x);
+		LOG("This is a collision");
+
+		wVec2 velocity1;
+		velocity1.x = 0;
+
+		//if (GetSpeed().x != 0)
+		{
+			velocity1.x = (GetSpeed().x * (mass - Body2->mass) + 2 * Body2->mass * Body2->GetSpeed().x) / (mass + Body2->mass);
+			//velocity1.x = GetSpeed().x - ((2 * Body2->mass) / (mass + Body2->mass)) * (((GetSpeed().x - Body2->GetSpeed().x) / (GetPosition().x - Body2->GetPosition().x)) / ((GetPosition().x - Body2->GetPosition().x) * (GetPosition().x - Body2->GetPosition().x))) * GetPosition().x - Body2->GetPosition().x * 0.1;
+		}
+		
+		//if (GetSpeed().y != 0)
+		{
+			//velocity1.y = GetSpeed().y - ((2 * Body2->mass) / (mass + Body2->mass)) * (((GetSpeed().y - Body2->GetSpeed().y) / (GetPosition().y - Body2->GetPosition().y)) / ((GetPosition().y - Body2->GetPosition().y) * (GetPosition().y - Body2->GetPosition().y))) * GetPosition().y - Body2->GetPosition().y * 0.1;
+			velocity1.y = (GetSpeed().y * (mass - Body2->mass) + 2 * Body2->mass * Body2->GetSpeed().y) / (mass + Body2->mass);
+		}
+		
+
+		SetLinearVelocity(velocity1);
+		LOG("X %f", GetPosition().x);
+		LOG("Y %f", GetPosition().y);
+
+	}
+
+	if (GetPosition().y < Body2->GetPosition().y)
+	{
+
+	}
+	
 }

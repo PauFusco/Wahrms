@@ -54,6 +54,14 @@ enum class ColliderType
 	UNKNOWN
 };
 
+enum class Integrator
+{
+	IMPLICIT_EULER,
+	SYMPLECTIC_EULER,
+	VERLET
+
+};
+
 
 // Collider of a wBody is itself
 class wBody
@@ -72,6 +80,7 @@ public:
 		
 	// Getters
 	wVec2 GetSpeed();
+	unsigned int GetMass();
 	wVec2 GetAcceleration();
 	p2Point<float> GetPosition();
 	
@@ -130,7 +139,7 @@ public:
 
 	void destroyBody(wBody* body);
 
-	//void CreateFloor(); // Create rectangle on the bottom on the screen and put it in the list (use class??)
+	void CreateFloor(); // Create rectangle on the bottom on the screen and put it in the list (use class??)
 
 private:
 	p2List<wBody*>* Bodies;
