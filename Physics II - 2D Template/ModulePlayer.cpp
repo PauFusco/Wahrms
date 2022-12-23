@@ -124,7 +124,7 @@ update_status ModulePlayer::Update()
 		}
 	}
 
-	if (App->input->GetKey(SDL_SCANCODE_1) == KEY_REPEAT)
+	if (App->input->GetKey(SDL_SCANCODE_1) == KEY_DOWN)
 	{
 
 		p2Point<float> position;
@@ -147,9 +147,6 @@ update_status ModulePlayer::Update()
 		}
 		
 	}
-	
-	
-
 
 	return UPDATE_CONTINUE;
 }
