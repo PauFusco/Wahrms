@@ -27,5 +27,8 @@ public:
 
 public:
 	wBody* plBody;
+	wBody* plBody2;
 	p2Point<float> pos; // Render Position (pixels)
+
+	p2List<wBody*> circles;
 };

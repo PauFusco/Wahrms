@@ -59,11 +59,12 @@ enum class ColliderType
 class wBody
 {
 public:
-	wBody(){}
+	wBody();
 	~wBody();
 
 	// Setters
 	void SetLinearVelocity(wVec2 v);
+	void SetLinearAcceleration(wVec2 a);
 	void SetPosition(p2Point<float> position);
 	
 	void SetWidth(int width);
@@ -71,9 +72,11 @@ public:
 		
 	// Getters
 	wVec2 GetSpeed();
+	wVec2 GetAcceleration();
 	p2Point<float> GetPosition();
 	
 	void OnCollision(wBody* Body2);
+
 
 public:
 	int width, height;
@@ -81,11 +84,13 @@ public:
 	bodyType btype;
 	wBodyClass wclass;
 
+	bool IsCollisionListener = false;
+
 private:
 	unsigned int mass = 1;
 	unsigned int elasticCoef = 1;
 	p2Point<float> bPos; // Position in meters
-	wVec2 speed;
+	wVec2 speed, acceleration;
 };
 
 class Floor
@@ -122,6 +127,8 @@ public:
 	void CheckCollision(); // Check collisions of all the elements in the body list
 	
 	void addBodyToList(wBody* body); // Add body to the list to be able to check collisions
+
+	void destroyBody(wBody* body);
 
 	//void CreateFloor(); // Create rectangle on the bottom on the screen and put it in the list (use class??)
 
