@@ -263,6 +263,11 @@ void ModulePhysics::integrator()
 	{
 		if (bodies->data->btype != bodyType::STATIC)
 		{
+			//CALCULATE FORCES
+
+			//TAKE ACCELERATION FROM FORCES CALCULATION AND USE IT TO FIND SPEED
+			//AND POSITION (ORDER DEPENDS ON WHAT INTEGRATION METHOD WE ARE USING)
+
 
 		}
 	}
