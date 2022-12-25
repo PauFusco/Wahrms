@@ -110,7 +110,7 @@ public:
 public:
 	wBody* floorBody;
 	
-	wVec2 gravity;
+	wVec2 gravity = wVec2(GRAVITY_X, GRAVITY_Y);
 	float frictionCoef;
 
 };
@@ -138,6 +138,7 @@ public:
 
 	void CreateFloor(); // Create rectangle on the bottom on the screen and put it in the list (use class??)
 
+	void integrator();
 
 private:
 	p2List<wBody*>* Bodies;

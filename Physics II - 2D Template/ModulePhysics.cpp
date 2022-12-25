@@ -85,7 +85,7 @@ update_status ModulePhysics::PostUpdate()
 			{
 
 				App->renderer->DrawCircle(place.x, place.y, bodies->data->GetWidth(), 255, 255, 255);
-				//App->renderer->DrawCircle(place.x, place.y, 1, 255, 0, 0);
+ 				//App->renderer->DrawCircle(place.x, place.y, 1, 255, 0, 0);
 			}
 			if (bodies->data->wclass == wBodyClass::SQUARE)
 			{
@@ -254,6 +254,18 @@ wBody* ModulePhysics::CreateCircle(float r, p2Point<float> pos)
 	addBodyToList(wbody);
 
 	return wbody;
+}
+
+void ModulePhysics::integrator()
+{
+	p2List_item<wBody*>* bodies;
+	for (bodies = Bodies->getFirst(); bodies != NULL; bodies = bodies->next)
+	{
+		if (bodies->data->btype != bodyType::STATIC)
+		{
+
+		}
+	}
 }
 
 
