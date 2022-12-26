@@ -21,7 +21,7 @@ bool ModulePhysics::Start()
 	Bodies = new p2List<wBody*>;
 	
 	CreateFloor();
-	
+
 	return true;
 }
 
@@ -30,13 +30,13 @@ update_status ModulePhysics::PreUpdate()
 {
 	if (Bodies != nullptr)
 	{
-		p2List_item<wBody*>* bodies;
+		/*p2List_item<wBody*>* bodies;
 		for (bodies = Bodies->getFirst(); bodies != NULL; bodies = bodies->next)
 		{
-			
+
 			p2Point<float> place = bodies->data->GetPosition();
 			if (bodies->data->btype == bodyType::DYNAMIC) {
-				
+
 
 
 
@@ -55,10 +55,10 @@ update_status ModulePhysics::PreUpdate()
 
 				bodies->data->SetPosition(newPos);
 			}
-		}
+		}*/
+		integrator();
 
-		CheckCollision();
-		
+		//CheckCollision();
 	}
 
 	return UPDATE_CONTINUE;
@@ -258,17 +258,57 @@ wBody* ModulePhysics::CreateCircle(float r, p2Point<float> pos)
 
 void ModulePhysics::integrator()
 {
+	deltat += 0.003;
 	p2List_item<wBody*>* bodies;
 	for (bodies = Bodies->getFirst(); bodies != NULL; bodies = bodies->next)
 	{
 		if (bodies->data->btype != bodyType::STATIC)
 		{
 			//CALCULATE FORCES
+			wVec2 gF, bF, fF, dF, tF; // Gravity, bounce, fregament, drag, total
+			
+			float bodyMass = bodies->data->GetMass();
+			
+			wVec2 g = wVec2(GRAVITY_X, GRAVITY_Y);
+			gF = wVec2(bodyMass * g.x, bodyMass*g.y);
 
-			//TAKE ACCELERATION FROM FORCES CALCULATION AND USE IT TO FIND SPEED
-			//AND POSITION (ORDER DEPENDS ON WHAT INTEGRATION METHOD WE ARE USING)
+			// If collision with bouncer, apply bounce force
+			bF = wVec2(0, 0);
+			// If collision with floor, apply fregament
+			fF = wVec2(0, 0);
+			// If in the air, apply drag force
+			dF = wVec2(0, 0);
 
+			float tFx = gF.x + bF.x + fF.x + dF.x;
+			float tFy = gF.y + bF.y + fF.y + dF.y;
+			wVec2 aF = wVec2(tFx/bodyMass, tFy/bodyMass);
 
+			// TAKE ACCELERATION FROM FORCES CALCULATION AND USE IT TO FIND SPEED
+			// AND POSITION (ORDER DEPENDS ON WHAT INTEGRATION METHOD WE ARE USING)
+			p2Point<float> actualPosition = bodies->data->GetPosition();
+			wVec2 actualVelocity = bodies->data->GetSpeed();
+			
+			float px, py, vx, vy;
+			px = actualPosition.x;
+			py = actualPosition.y;
+			vx = actualVelocity.x;
+			vy = actualVelocity.y;
+			
+			// Implicit Euler --> x += v At -> v += a At
+			px += vx * deltat;
+			py += vy * deltat;
+
+			vx = aF.x * deltat;
+			vy = aF.y * deltat;
+			
+			actualPosition.x = px;
+			actualPosition.y = py;
+
+			actualVelocity.x = vx;
+			actualVelocity.y = vy;
+
+			bodies->data->SetPosition(actualPosition);
+			bodies->data->SetLinearVelocity(actualVelocity);
 		}
 	}
 }
@@ -313,6 +353,10 @@ int wBody::GetHeight()
 int wBody::GetWidth()
 {
 	return width;
+}
+float wBody::GetMass()
+{
+	return mass;
 }
 void wBody::OnCollision(wBody* Body2)
 {

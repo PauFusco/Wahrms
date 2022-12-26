@@ -6,7 +6,7 @@
 
 // Define Physics Globals here
 #define GRAVITY_X 0.0f
-#define GRAVITY_Y -23.0f
+#define GRAVITY_Y 23.0f
 
 // Meters to pixels and reverse (transformation and coeficient)
 #define PIXELS_PER_METER 50.0f // if touched change METER_PER_PIXEL too
@@ -14,6 +14,7 @@
 
 #define METERS_TO_PIXELS(m) ((int) (PIXELS_PER_METER * m))
 #define PIXEL_TO_METERS(p)  ((float) METER_PER_PIXEL * p)
+
 
 
 // b2Vec2 equivalent
@@ -79,6 +80,8 @@ public:
 	int GetWidth();
 	int GetHeight();
 
+	float GetMass();
+
 	void OnCollision(wBody* Body2);
 
 
@@ -139,6 +142,8 @@ public:
 	void CreateFloor(); // Create rectangle on the bottom on the screen and put it in the list (use class??)
 
 	void integrator();
+
+	float deltat = 0.166666667;
 
 private:
 	p2List<wBody*>* Bodies;
