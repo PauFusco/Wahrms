@@ -53,6 +53,13 @@ enum class ColliderType
 	UNKNOWN
 };
 
+enum class IntegrationMethod
+{
+	IMPLICIT_EULER,
+	SYMPLECTIC_EULER,
+	VELOCITY_VERLET,
+	UNKNOWN
+};
 
 // Collider of a wBody is itself
 class wBody
@@ -87,7 +94,8 @@ public:
 	bodyType btype;
 	wBodyClass wclass;
 
-	float t = 0;
+	float tx = 0;
+	float ty = 0;
 	
 	bool IsCollisionListener = false;
 
@@ -144,4 +152,5 @@ public:
 private:
 	p2List<wBody*>* Bodies;
 	bool debug = true;
+	IntegrationMethod IntMeth = IntegrationMethod::VELOCITY_VERLET;
 };

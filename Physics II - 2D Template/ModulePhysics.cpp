@@ -293,14 +293,50 @@ void ModulePhysics::integrator()
 			py = PIXEL_TO_METERS(actualPosition.y);
 			vx = PIXEL_TO_METERS(actualVelocity.x);
 			vy = PIXEL_TO_METERS(actualVelocity.y);
+			float tx, ty;
+			tx = bodies->data->tx;
+			ty = bodies->data->ty;
+			// If speed on a variable is 0, reset timer for when it starts moving again
 			
-			// Implicit Euler --> x += v At -> v += a At
-			px += vx * bodies->data->t;
-			py += vy * bodies->data->t;
+			switch (IntMeth) {
+			case(IntegrationMethod::IMPLICIT_EULER):
+				// Implicit Euler --> x += v At -> v += a At
+				px += vx * tx;
+				py += vy * ty;
 
-			vx = aF.x * bodies->data->t;
-			vy = aF.y * bodies->data->t;
+				vx = aF.x * tx;
+				vy = aF.y * ty;
+				break;
+
+			case(IntegrationMethod::SYMPLECTIC_EULER):
+				vx = aF.x * tx;
+				vy = aF.y * ty;
+				
+				px += vx * tx;
+				py += vy * ty;
+				break;
 			
+			case(IntegrationMethod::VELOCITY_VERLET):
+				px += vx * tx + 0.5 * aF.x * tx * tx;
+				py += vy * ty + 0.5 * aF.y * ty * ty;
+
+				vx = aF.x * tx;
+				vy = aF.y * ty;
+				break;
+
+			default:
+				IntMeth = IntegrationMethod::IMPLICIT_EULER;
+			}
+
+			if (vx == 0)
+			{
+				bodies->data->tx = 0;
+			}
+			if (vy == 0)
+			{
+				bodies->data->ty = 0;
+			}
+
 			actualPosition.x = METERS_TO_PIXELS(px);
 			actualPosition.y = METERS_TO_PIXELS(py);
 
@@ -309,8 +345,9 @@ void ModulePhysics::integrator()
 
 			bodies->data->SetPosition(actualPosition);
 			bodies->data->SetLinearVelocity(actualVelocity);
-			
-			bodies->data->t += dt;
+
+			bodies->data->tx += dt;
+			bodies->data->ty += dt;
 		}
 	}
 }
