@@ -4,6 +4,8 @@
 #include "math.h"
 #include "p2Point.h"
 
+float dt = 0.1666667;
+
 ModulePhysics::ModulePhysics(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
 	debug = true;
@@ -243,8 +245,7 @@ wBody* ModulePhysics::CreateCircle(float r, p2Point<float> pos)
 	wbody->wclass = wBodyClass::CIRCLE;
 	wbody->SetPosition(pos);
 	wbody->SetLinearVelocity(wVec2(0, 0));
-	wbody->SetLinearAcceleration(wVec2(0, 1.0));
-
+	
 	wbody->SetWidth(METERS_TO_PIXELS(r * 0.5));
 	wbody->SetHeight(METERS_TO_PIXELS(r * 0.5));
 
@@ -269,7 +270,7 @@ void ModulePhysics::integrator()
 			float bodyMass = bodies->data->GetMass();
 			
 			wVec2 g = wVec2(GRAVITY_X, GRAVITY_Y);
-			gF = wVec2(bodyMass * g.x, bodyMass*g.y);
+			gF = wVec2(bodyMass * g.x, bodyMass * g.y);
 
 			// If collision with bouncer, apply bounce force
 			bF = wVec2(0, 0);
@@ -288,26 +289,28 @@ void ModulePhysics::integrator()
 			wVec2 actualVelocity = bodies->data->GetSpeed();
 			
 			float px, py, vx, vy;
-			px = actualPosition.x;
-			py = actualPosition.y;
-			vx = actualVelocity.x;
-			vy = actualVelocity.y;
+			px = PIXEL_TO_METERS(actualPosition.x);
+			py = PIXEL_TO_METERS(actualPosition.y);
+			vx = PIXEL_TO_METERS(actualVelocity.x);
+			vy = PIXEL_TO_METERS(actualVelocity.y);
 			
 			// Implicit Euler --> x += v At -> v += a At
-			px += vx * dt;
-			py += vy * dt;
+			px += vx * bodies->data->t;
+			py += vy * bodies->data->t;
 
-			vx = aF.x * dt;
-			vy = aF.y * dt;
+			vx = aF.x * bodies->data->t;
+			vy = aF.y * bodies->data->t;
 			
-			actualPosition.x = px;
-			actualPosition.y = py;
+			actualPosition.x = METERS_TO_PIXELS(px);
+			actualPosition.y = METERS_TO_PIXELS(py);
 
-			actualVelocity.x = vx;
-			actualVelocity.y = vy;
+			actualVelocity.x = METERS_TO_PIXELS(vx);
+			actualVelocity.y = METERS_TO_PIXELS(vy);
 
 			bodies->data->SetPosition(actualPosition);
 			bodies->data->SetLinearVelocity(actualVelocity);
+			
+			bodies->data->t += dt;
 		}
 	}
 }
@@ -316,10 +319,6 @@ void ModulePhysics::integrator()
 void wBody::SetLinearVelocity(wVec2 v)
 {
 	speed = v;
-}
-void wBody::SetLinearAcceleration(wVec2 a)
-{
-	acceleration = a;
 }
 void wBody::SetPosition(p2Point<float> position)
 {
@@ -336,10 +335,6 @@ void wBody::SetWidth(int iwidth)
 wVec2 wBody::GetSpeed()
 {
 	return speed;
-}
-wVec2 wBody::GetAcceleration()
-{
-	return acceleration;
 }
 p2Point<float> wBody::GetPosition()
 {
