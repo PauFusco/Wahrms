@@ -143,8 +143,6 @@ public:
 
 	void integrator();
 
-	float deltat = 0.166666667;
-
 private:
 	p2List<wBody*>* Bodies;
 	bool debug = true;

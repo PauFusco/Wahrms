@@ -258,7 +258,6 @@ wBody* ModulePhysics::CreateCircle(float r, p2Point<float> pos)
 
 void ModulePhysics::integrator()
 {
-	deltat += 0.003;
 	p2List_item<wBody*>* bodies;
 	for (bodies = Bodies->getFirst(); bodies != NULL; bodies = bodies->next)
 	{
@@ -295,11 +294,11 @@ void ModulePhysics::integrator()
 			vy = actualVelocity.y;
 			
 			// Implicit Euler --> x += v At -> v += a At
-			px += vx * deltat;
-			py += vy * deltat;
+			px += vx * dt;
+			py += vy * dt;
 
-			vx = aF.x * deltat;
-			vy = aF.y * deltat;
+			vx = aF.x * dt;
+			vy = aF.y * dt;
 			
 			actualPosition.x = px;
 			actualPosition.y = py;
