@@ -296,7 +296,6 @@ void ModulePhysics::integrator()
 			float tx, ty;
 			tx = bodies->data->tx;
 			ty = bodies->data->ty;
-			// If speed on a variable is 0, reset timer for when it starts moving again
 			
 			switch (IntMeth) {
 			case(IntegrationMethod::IMPLICIT_EULER):
@@ -345,7 +344,8 @@ void ModulePhysics::integrator()
 
 			bodies->data->SetPosition(actualPosition);
 			bodies->data->SetLinearVelocity(actualVelocity);
-
+			
+			// If speed on a variable is 0, reset timer for when it starts moving again
 			bodies->data->tx += dt;
 			bodies->data->ty += dt;
 		}
