@@ -86,7 +86,7 @@ update_status ModulePhysics::PostUpdate()
 			if (bodies->data->wclass == wBodyClass::CIRCLE) 
 			{
 
-				App->renderer->DrawCircle(place.x, place.y, bodies->data->GetWidth(), 255, 255, 255);
+				App->renderer->DrawCircle(place.x, place.y, bodies->data->GetWidth() / 2, 255, 255, 255);
  				//App->renderer->DrawCircle(place.x, place.y, 1, 255, 0, 0);
 			}
 			if (bodies->data->wclass == wBodyClass::SQUARE)
@@ -120,13 +120,7 @@ bool ModulePhysics::CleanUp()
 	p2List_item<wBody*>* bodies;
 	//for (bodies = Bodies->getFirst(); bodies != NULL; bodies = bodies->next)
 	{
-		
-
-		
 		//Bodies->del(bodies);
-			
-		
-		
 	}
 
 	return true;
