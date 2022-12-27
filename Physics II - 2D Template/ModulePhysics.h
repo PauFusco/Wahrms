@@ -155,6 +155,8 @@ private:
 	p2List<wBody*>* Bodies;
 	bool debug = true;
 
+	Floor* floor;
+
 	IntegrationMethod IntMeth = IntegrationMethod::IMPLICIT_EULER;
 	char* methCharie = "IMPLICIT EULER <";
 	char* methCharse = "SYMPLECTIC EULER <";

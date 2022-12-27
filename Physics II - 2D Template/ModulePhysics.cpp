@@ -40,7 +40,18 @@ update_status ModulePhysics::PreUpdate()
 {
 	if (Bodies != nullptr)
 	{
-		if (App->input->GetKey(SDL_SCANCODE_F9 ) == KEY_DOWN)
+		// Gravity control
+		if (App->input->GetKey(SDL_SCANCODE_F7) == KEY_DOWN)
+		{
+			floor->gravity.y -= 0.001;
+		}
+		if (App->input->GetKey(SDL_SCANCODE_F8) == KEY_DOWN)
+		{
+			floor->gravity.y += 0.001;
+		}
+		
+		// Integration Method control
+		if (App->input->GetKey(SDL_SCANCODE_F9) == KEY_DOWN)
 		{
 			IntMeth = IntegrationMethod::IMPLICIT_EULER;
 		}
@@ -53,6 +64,7 @@ update_status ModulePhysics::PreUpdate()
 			IntMeth = IntegrationMethod::VELOCITY_VERLET;
 		}
 		
+
 		integrator();
 
 		//CheckCollision();
@@ -123,7 +135,7 @@ void ModulePhysics::printDebugInfo()
 	}
 
 	// Gravity acceleration debug
-	string temp = to_string(GRAVITY_Y);
+	string temp = to_string(floor->gravity.y);
 	gravChar = temp.c_str();
 	App->fonts->BlitText(0, 15, 0, "ACTUAL GRAVITY;");
 	App->fonts->BlitText(130, 15, 0, gravChar);
@@ -244,7 +256,7 @@ void ModulePhysics::CreateFloor()
 
 	addBodyToList(floorBody);
 
-	Floor* floor = new Floor(wVec2(GRAVITY_X, GRAVITY_Y), 0, floorBody);
+	floor = new Floor(wVec2(GRAVITY_X, GRAVITY_Y), 0, floorBody);
 }
 
 // wBody Functions
@@ -281,7 +293,7 @@ void ModulePhysics::integrator()
 			
 			float bodyMass = bodies->data->GetMass();
 			
-			wVec2 g = wVec2(GRAVITY_X, GRAVITY_Y);
+			wVec2 g = floor->gravity;
 			gF = wVec2(bodyMass * g.x, bodyMass * g.y);
 
 			// If collision with bouncer, apply bounce force
