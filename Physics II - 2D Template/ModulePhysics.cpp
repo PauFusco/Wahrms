@@ -1,8 +1,12 @@
 #include "Globals.h"
 #include "Application.h"
 #include "ModulePhysics.h"
+#include "ModuleFonts.h"
 #include "math.h"
 #include "p2Point.h"
+#include <string>
+
+using namespace std;
 
 float dt = 0.1666667;
 
@@ -22,6 +26,10 @@ bool ModulePhysics::Start()
 	
 	Bodies = new p2List<wBody*>;
 	
+	const char* fontPath = "Assets/Fonts/rtype_font3.png";
+	const char* chars = "! c,_./0123456789e;><?ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+	App->fonts->Load(fontPath, chars, 2);
+
 	CreateFloor();
 
 	return true;
@@ -32,33 +40,7 @@ update_status ModulePhysics::PreUpdate()
 {
 	if (Bodies != nullptr)
 	{
-		/*p2List_item<wBody*>* bodies;
-		for (bodies = Bodies->getFirst(); bodies != NULL; bodies = bodies->next)
-		{
-
-			p2Point<float> place = bodies->data->GetPosition();
-			if (bodies->data->btype == bodyType::DYNAMIC) {
-
-
-
-
-				// changing the velocity according to the acceleration
-				wVec2 newVel;
-				newVel.x = bodies->data->GetSpeed().x + bodies->data->GetAcceleration().x;
-				newVel.y = bodies->data->GetSpeed().y + bodies->data->GetAcceleration().y;
-
-				bodies->data->SetLinearVelocity(newVel);
-
-
-				// changing the position according to the velocity, in the future we should make sure that it follows the dt
-				p2Point<float> newPos;
-				newPos.x = (bodies->data->GetSpeed().x / 10 + bodies->data->GetPosition().x) ;
-				newPos.y = (bodies->data->GetSpeed().y / 10 + bodies->data->GetPosition().y);
-
-				bodies->data->SetPosition(newPos);
-			}
-		}*/
-		if (App->input->GetKey(SDL_SCANCODE_F9) == KEY_DOWN)
+		if (App->input->GetKey(SDL_SCANCODE_F9 ) == KEY_DOWN)
 		{
 			IntMeth = IntegrationMethod::IMPLICIT_EULER;
 		}
@@ -70,6 +52,7 @@ update_status ModulePhysics::PreUpdate()
 		{
 			IntMeth = IntegrationMethod::VELOCITY_VERLET;
 		}
+		
 		integrator();
 
 		//CheckCollision();
@@ -89,12 +72,11 @@ update_status ModulePhysics::PostUpdate()
 	
 	if (Bodies != nullptr)
 	{
-		
 		p2List_item<wBody*>* bodies;
 		for (bodies = Bodies->getFirst(); bodies != NULL; bodies = bodies->next)
 		{
-			
 			p2Point<float> place = bodies->data->GetPosition();
+			
 			if (bodies->data->wclass == wBodyClass::CIRCLE) 
 			{
 
@@ -103,6 +85,7 @@ update_status ModulePhysics::PostUpdate()
 				App->renderer->DrawCircle(place.x, place.y, 1, 255, 0, 0);
         
 			}
+
 			if (bodies->data->wclass == wBodyClass::SQUARE)
 			{
 				SDL_Rect thisRect;
@@ -113,14 +96,37 @@ update_status ModulePhysics::PostUpdate()
 				thisRect.h = bodies->data->GetHeight();
 
 				App->renderer->DrawQuad(thisRect, 255, 255, 255, 255, true, true);
-
-
 			}
-
 		}
 	}
 	
+	printDebugInfo();
+	
 	return UPDATE_CONTINUE;
+}
+
+void ModulePhysics::printDebugInfo()
+{
+	// Integration Method debug
+	App->fonts->BlitText(0, 0, 0, "INTEGRATION METHOD;");
+	switch (IntMeth)
+	{
+	case(IntegrationMethod::IMPLICIT_EULER):
+		App->fonts->BlitText(160, 0, 0, methCharie);
+		break;
+	case(IntegrationMethod::SYMPLECTIC_EULER):
+		App->fonts->BlitText(160, 0, 0, methCharse);
+		break;
+	case(IntegrationMethod::VELOCITY_VERLET):
+		App->fonts->BlitText(160, 0, 0, methCharvv);
+		break;
+	}
+
+	// Gravity acceleration debug
+	string temp = to_string(GRAVITY_Y);
+	gravChar = temp.c_str();
+	App->fonts->BlitText(0, 15, 0, "ACTUAL GRAVITY;");
+	App->fonts->BlitText(130, 15, 0, gravChar);
 }
 
 // Called before quitting
@@ -305,7 +311,6 @@ void ModulePhysics::integrator()
 			
 			switch (IntMeth) {
 			case(IntegrationMethod::IMPLICIT_EULER):
-				// Implicit Euler --> x += v At -> v += a At
 				px += vx * tx;
 				py += vy * ty;
 

@@ -149,9 +149,16 @@ public:
 
 	void integrator();
 
+	void printDebugInfo();
+
 private:
 	p2List<wBody*>* Bodies;
 	bool debug = true;
 
 	IntegrationMethod IntMeth = IntegrationMethod::IMPLICIT_EULER;
+	char* methCharie = "IMPLICIT EULER <";
+	char* methCharse = "SYMPLECTIC EULER <";
+	char* methCharvv = "VELOCITY VERLET <";
+
+	const char* gravChar;
 };
