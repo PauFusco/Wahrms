@@ -58,6 +58,18 @@ update_status ModulePhysics::PreUpdate()
 				bodies->data->SetPosition(newPos);
 			}
 		}*/
+		if (App->input->GetKey(SDL_SCANCODE_F9) == KEY_DOWN)
+		{
+			IntMeth = IntegrationMethod::IMPLICIT_EULER;
+		}
+		if (App->input->GetKey(SDL_SCANCODE_F10) == KEY_DOWN)
+		{
+			IntMeth = IntegrationMethod::SYMPLECTIC_EULER;
+		}
+		if (App->input->GetKey(SDL_SCANCODE_F11) == KEY_DOWN)
+		{
+			IntMeth = IntegrationMethod::VELOCITY_VERLET;
+		}
 		integrator();
 
 		//CheckCollision();
