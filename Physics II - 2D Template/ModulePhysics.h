@@ -86,8 +86,6 @@ public:
 	int GetWidth();
 	int GetHeight();
 
-	float GetMass();
-
 	void OnCollision(wBody* Body2);
 
 

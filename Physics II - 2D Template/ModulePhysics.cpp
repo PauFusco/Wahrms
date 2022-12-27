@@ -395,10 +395,6 @@ int wBody::GetWidth()
 {
 	return width;
 }
-float wBody::GetMass()
-{
-	return mass;
-}
 void wBody::OnCollision(wBody* Body2)
 {
 	if (wclass == wBodyClass::CIRCLE && Body2->wclass == wBodyClass::CIRCLE)
