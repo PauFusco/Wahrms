@@ -40,6 +40,7 @@ update_status ModulePhysics::PreUpdate()
 {
 	if (Bodies != nullptr)
 	{
+
 		// Gravity control
 		if (App->input->GetKey(SDL_SCANCODE_F7) == KEY_DOWN)
 		{
@@ -55,6 +56,7 @@ update_status ModulePhysics::PreUpdate()
 		{
 			IntMeth = IntegrationMethod::IMPLICIT_EULER;
 		}
+
 		if (App->input->GetKey(SDL_SCANCODE_F10) == KEY_DOWN)
 		{
 			IntMeth = IntegrationMethod::SYMPLECTIC_EULER;
@@ -67,7 +69,8 @@ update_status ModulePhysics::PreUpdate()
 
 		integrator();
 
-		//CheckCollision();
+		CheckCollision();
+
 	}
 
 	return UPDATE_CONTINUE;
@@ -93,8 +96,9 @@ update_status ModulePhysics::PostUpdate()
 			{
 
 
-				App->renderer->DrawCircle(place.x, place.y, bodies->data->GetWidth(), 255, 255, 255);
-				App->renderer->DrawCircle(place.x, place.y, 1, 255, 0, 0);
+				App->renderer->DrawCircle(METERS_TO_PIXELS(place.x), METERS_TO_PIXELS(place.y), bodies->data->GetWidth(), 255, 255, 255);
+				App->renderer->DrawCircle(METERS_TO_PIXELS(place.x), METERS_TO_PIXELS(place.y), 1, 255, 0, 0);
+
         
 			}
 
@@ -108,6 +112,9 @@ update_status ModulePhysics::PostUpdate()
 				thisRect.h = bodies->data->GetHeight();
 
 				App->renderer->DrawQuad(thisRect, 255, 255, 255, 255, true, true);
+
+				App->renderer->DrawCircle(thisRect.x, thisRect.y, 1, 255, 0, 0);
+
 			}
 		}
 	}
@@ -135,7 +142,9 @@ void ModulePhysics::printDebugInfo()
 	}
 
 	// Gravity acceleration debug
+
 	string temp = to_string(floor->gravity.y);
+
 	gravChar = temp.c_str();
 	App->fonts->BlitText(0, 15, 0, "ACTUAL GRAVITY;");
 	App->fonts->BlitText(130, 15, 0, gravChar);
@@ -210,7 +219,7 @@ void ModulePhysics::CheckCollision()
 					if (bodies2->data->wclass == wBodyClass::CIRCLE)
 					{
 						
-						float radius = bodies->data->GetWidth() + bodies2->data->GetWidth();
+						float radius = PIXEL_TO_METERS(bodies->data->GetWidth()) + PIXEL_TO_METERS(bodies2->data->GetWidth());
 						float distance = bodies->data->GetPosition().DistanceTo(bodies2->data->GetPosition());
 
 						if (distance < radius)
@@ -221,7 +230,24 @@ void ModulePhysics::CheckCollision()
 					}
 					else if (bodies2->data->wclass == wBodyClass::SQUARE)
 					{
+						if (bodies->data->GetPosition().y < bodies2->data->GetPosition().y)
+						{
+							p2Point<float> FloorPos;
 
+							FloorPos.x = bodies->data->GetPosition().x;
+							FloorPos.y = bodies2->data->GetPosition().y;
+
+							float radius = PIXEL_TO_METERS(bodies->data->GetWidth());
+							float distance = bodies->data->GetPosition().DistanceTo(FloorPos);
+
+							if (distance < radius)
+							{
+								bodies->data->OnCollision(bodies2->data);
+								
+								
+
+							}
+						}
 					}
 				}
 				else if (bodies->data->wclass == wBodyClass::SQUARE)
@@ -246,9 +272,12 @@ void ModulePhysics::CreateFloor()
 	floorPos.y = PIXEL_TO_METERS(600);
 
 	floorBody->SetPosition(floorPos);
+	floorBody->SetLinearVelocity(wVec2(0, 0));
 
 	floorBody->SetWidth(SCREEN_WIDTH);
 	floorBody->SetHeight(SCREEN_HEIGHT - floorPos.y);
+
+	floorBody->SetMass(floorBody->GetHeight() * floorBody->GetWidth());
 
 	floorBody->btype = bodyType::STATIC;
 	floorBody->wclass = wBodyClass::SQUARE;
@@ -259,28 +288,6 @@ void ModulePhysics::CreateFloor()
 	floor = new Floor(wVec2(GRAVITY_X, GRAVITY_Y), 0, floorBody);
 }
 
-// wBody Functions
-wBody* ModulePhysics::CreateCircle(float r, p2Point<float> pos)
-{
-	wBody* wbody = new wBody();
-	pos.x = METERS_TO_PIXELS(pos.x);
-	pos.y = METERS_TO_PIXELS(pos.y);
-
-	wbody->wclass = wBodyClass::CIRCLE;
-	wbody->SetPosition(pos);
-	wbody->SetLinearVelocity(wVec2(0, 0));
-
-	wbody->SetWidth(METERS_TO_PIXELS(r * 0.5));
-	wbody->SetHeight(METERS_TO_PIXELS(r * 0.5));
-
-	wbody->ctype = ColliderType::UNKNOWN;
-	wbody->btype = bodyType::DYNAMIC;
-
-	addBodyToList(wbody);
-
-	return wbody;
-}
-
 void ModulePhysics::integrator()
 {
 	p2List_item<wBody*>* bodies;
@@ -289,61 +296,69 @@ void ModulePhysics::integrator()
 		if (bodies->data->btype != bodyType::STATIC)
 		{
 			//CALCULATE FORCES
-			wVec2 gF, bF, fF, dF, tF; // Gravity, bounce, fregament, drag, total
-			
+
+
+
 			float bodyMass = bodies->data->GetMass();
-			
-			wVec2 g = floor->gravity;
-			gF = wVec2(bodyMass * g.x, bodyMass * g.y);
+
+			wVec2 g = wVec2(GRAVITY_X, GRAVITY_Y);
+			bodies->data->gF = wVec2(bodyMass * g.x, bodyMass * g.y);
 
 			// If collision with bouncer, apply bounce force
-			bF = wVec2(0, 0);
+			bodies->data->bF = wVec2(0, 0);
 			// If collision with floor, apply fregament
-			fF = wVec2(0, 0);
+			bodies->data->fF = wVec2(0, 0);
 			// If in the air, apply drag force
-			dF = wVec2(0, 0);
+			bodies->data->dF = wVec2(0, 0);
 
-			float tFx = gF.x + bF.x + fF.x + dF.x;
-			float tFy = gF.y + bF.y + fF.y + dF.y;
-			wVec2 aF = wVec2(tFx/bodyMass, tFy/bodyMass);
+			float tFx = bodies->data->gF.x + bodies->data->bF.x + bodies->data->fF.x + bodies->data->dF.x;
+			float tFy = bodies->data->gF.y + bodies->data->bF.y + bodies->data->fF.y + bodies->data->dF.y;
+			wVec2 aF = wVec2(tFx / bodyMass, tFy / bodyMass);
+			
 
 			// TAKE ACCELERATION FROM FORCES CALCULATION AND USE IT TO FIND SPEED
 			// AND POSITION (ORDER DEPENDS ON WHAT INTEGRATION METHOD WE ARE USING)
 			p2Point<float> actualPosition = bodies->data->GetPosition();
 			wVec2 actualVelocity = bodies->data->GetSpeed();
-			
+
 			float px, py, vx, vy;
-			px = PIXEL_TO_METERS(actualPosition.x);
-			py = PIXEL_TO_METERS(actualPosition.y);
-			vx = PIXEL_TO_METERS(actualVelocity.x);
-			vy = PIXEL_TO_METERS(actualVelocity.y);
+			//px = PIXEL_TO_METERS(actualPosition.x);
+			//py = PIXEL_TO_METERS(actualPosition.y);
+			//vx = PIXEL_TO_METERS(actualVelocity.x);
+			//vy = PIXEL_TO_METERS(actualVelocity.y);
+			px = actualPosition.x;
+			py = actualPosition.y;
+			vx = actualVelocity.x;
+			vy = actualVelocity.y;
 			float tx, ty;
 			tx = bodies->data->tx;
 			ty = bodies->data->ty;
+
 			
+
 			switch (IntMeth) {
 			case(IntegrationMethod::IMPLICIT_EULER):
 				px += vx * tx;
 				py += vy * ty;
 
-				vx = aF.x * tx;
-				vy = aF.y * ty;
+				vx += aF.x * tx;
+				vy += aF.y * ty;
 				break;
 
 			case(IntegrationMethod::SYMPLECTIC_EULER):
-				vx = aF.x * tx;
-				vy = aF.y * ty;
-				
+				vx += aF.x * tx;
+				vy += aF.y * ty;
+
 				px += vx * tx;
 				py += vy * ty;
 				break;
-			
+
 			case(IntegrationMethod::VELOCITY_VERLET):
 				px += vx * tx + 0.5 * aF.x * tx * tx;
 				py += vy * ty + 0.5 * aF.y * ty * ty;
 
-				vx = aF.x * tx;
-				vy = aF.y * ty;
+				vx += aF.x * tx;
+				vy += aF.y * ty;
 				break;
 
 			default:
@@ -359,20 +374,59 @@ void ModulePhysics::integrator()
 				bodies->data->ty = 0;
 			}
 
-			actualPosition.x = METERS_TO_PIXELS(px);
-			actualPosition.y = METERS_TO_PIXELS(py);
+			//actualPosition.x = METERS_TO_PIXELS(px);
+			//actualPosition.y = METERS_TO_PIXELS(py);
+			//
+			//actualVelocity.x = METERS_TO_PIXELS(vx);
+			//actualVelocity.y = METERS_TO_PIXELS(vy);
 
-			actualVelocity.x = METERS_TO_PIXELS(vx);
-			actualVelocity.y = METERS_TO_PIXELS(vy);
+			actualPosition.x = px;
+			actualPosition.y = py;
+
+			actualVelocity.x = vx;
+			actualVelocity.y = vy;
+
+			LOG("vy: %f", vy);
 
 			bodies->data->SetPosition(actualPosition);
 			bodies->data->SetLinearVelocity(actualVelocity);
-			
+
 			// If speed on a variable is 0, reset timer for when it starts moving again
-			bodies->data->tx += dt;
-			bodies->data->ty += dt;
+			bodies->data->tx = dt;
+			bodies->data->ty = dt;
 		}
 	}
+}
+
+// wBody Functions
+wBody* ModulePhysics::CreateCircle(float r, p2Point<float> pos)
+{
+	wBody* wbody = new wBody();
+	//pos.x = METERS_TO_PIXELS(pos.x);
+	//pos.y = METERS_TO_PIXELS(pos.y);
+
+	wbody->wclass = wBodyClass::CIRCLE;
+	wbody->SetPosition(pos);
+	wbody->SetLinearVelocity(wVec2(0, 0));
+
+	wbody->SetWidth(METERS_TO_PIXELS(r * 0.5));
+	wbody->SetHeight(METERS_TO_PIXELS(r * 0.5));
+
+	wbody->SetMass(3.14 * r);
+
+	wbody->ctype = ColliderType::UNKNOWN;
+	wbody->btype = bodyType::DYNAMIC;
+
+	addBodyToList(wbody);
+
+	return wbody;
+}
+
+
+void wBody::SetMass(float _mass)
+{
+	mass = _mass;
+
 }
 
 
@@ -396,10 +450,16 @@ void wBody::SetWidth(int iwidth)
 {
 	width = iwidth;
 }
+void wBody::SetRestitution(float _restitution)
+{
+	restitution = _restitution;
+}
+
 wVec2 wBody::GetSpeed()
 {
 	return speed;
 }
+
 p2Point<float> wBody::GetPosition()
 {
 	return bPos;
@@ -411,6 +471,10 @@ int wBody::GetHeight()
 int wBody::GetWidth()
 {
 	return width;
+}
+float wBody::GetRestitution()
+{
+	return restitution;
 }
 void wBody::OnCollision(wBody* Body2)
 {
@@ -426,6 +490,7 @@ void wBody::OnCollision(wBody* Body2)
 		//if (GetSpeed().x != 0)
 		{
 			velocity1.x = (GetSpeed().x * (mass - Body2->mass) + 2 * Body2->mass * Body2->GetSpeed().x) / (mass + Body2->mass);
+			LOG("COLLIDING NOW");
 			//velocity1.x = GetSpeed().x - ((2 * Body2->mass) / (mass + Body2->mass)) * (((GetSpeed().x - Body2->GetSpeed().x) / (GetPosition().x - Body2->GetPosition().x)) / ((GetPosition().x - Body2->GetPosition().x) * (GetPosition().x - Body2->GetPosition().x))) * GetPosition().x - Body2->GetPosition().x * 0.1;
 		}
 		
@@ -440,6 +505,19 @@ void wBody::OnCollision(wBody* Body2)
 		LOG("X %f", GetPosition().x);
 		LOG("Y %f", GetPosition().y);
 
+	}
+	else if (wclass == wBodyClass::CIRCLE && Body2->wclass == wBodyClass::SQUARE)
+	{
+		//LOG("COLLIDING NOW");
+
+		wVec2 velocity1;
+		velocity1.x = GetSpeed().x;
+
+		LOG("COLLIDING NOW %f", (Body2->GetSpeed().x ));
+		//velocity1.x = (GetSpeed().x * (mass - Body2->mass) + 2 * Body2->mass * Body2->GetSpeed().x) / (mass + Body2->mass) * GetRestitution() * Body2->GetRestitution();
+		velocity1.y = (GetSpeed().y * (mass - Body2->mass) + 2 * Body2->mass * Body2->GetSpeed().y) / (mass + Body2->mass) * GetRestitution() * Body2->GetRestitution();
+
+		SetLinearVelocity(velocity1);
 	}
 
 	if (GetPosition().y < Body2->GetPosition().y)
