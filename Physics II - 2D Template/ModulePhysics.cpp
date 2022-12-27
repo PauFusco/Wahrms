@@ -40,10 +40,23 @@ update_status ModulePhysics::PreUpdate()
 {
 	if (Bodies != nullptr)
 	{
-		if (App->input->GetKey(SDL_SCANCODE_F9 ) == KEY_DOWN)
+
+		// Gravity control
+		if (App->input->GetKey(SDL_SCANCODE_F7) == KEY_DOWN)
+		{
+			floor->gravity.y -= 0.001;
+		}
+		if (App->input->GetKey(SDL_SCANCODE_F8) == KEY_DOWN)
+		{
+			floor->gravity.y += 0.001;
+		}
+		
+		// Integration Method control
+		if (App->input->GetKey(SDL_SCANCODE_F9) == KEY_DOWN)
 		{
 			IntMeth = IntegrationMethod::IMPLICIT_EULER;
 		}
+
 		if (App->input->GetKey(SDL_SCANCODE_F10) == KEY_DOWN)
 		{
 			IntMeth = IntegrationMethod::SYMPLECTIC_EULER;
@@ -53,9 +66,11 @@ update_status ModulePhysics::PreUpdate()
 			IntMeth = IntegrationMethod::VELOCITY_VERLET;
 		}
 		
+
 		integrator();
 
 		CheckCollision();
+
 	}
 
 	return UPDATE_CONTINUE;
@@ -83,6 +98,7 @@ update_status ModulePhysics::PostUpdate()
 
 				App->renderer->DrawCircle(METERS_TO_PIXELS(place.x), METERS_TO_PIXELS(place.y), bodies->data->GetWidth(), 255, 255, 255);
 				App->renderer->DrawCircle(METERS_TO_PIXELS(place.x), METERS_TO_PIXELS(place.y), 1, 255, 0, 0);
+
         
 			}
 
@@ -96,7 +112,9 @@ update_status ModulePhysics::PostUpdate()
 				thisRect.h = bodies->data->GetHeight();
 
 				App->renderer->DrawQuad(thisRect, 255, 255, 255, 255, true, true);
+
 				App->renderer->DrawCircle(thisRect.x, thisRect.y, 1, 255, 0, 0);
+
 			}
 		}
 	}
@@ -124,7 +142,9 @@ void ModulePhysics::printDebugInfo()
 	}
 
 	// Gravity acceleration debug
-	string temp = to_string(GRAVITY_Y);
+
+	string temp = to_string(floor->gravity.y);
+
 	gravChar = temp.c_str();
 	App->fonts->BlitText(0, 15, 0, "ACTUAL GRAVITY;");
 	App->fonts->BlitText(130, 15, 0, gravChar);
@@ -265,7 +285,7 @@ void ModulePhysics::CreateFloor()
 
 	addBodyToList(floorBody);
 
-	Floor* floor = new Floor(wVec2(GRAVITY_X, GRAVITY_Y), 0, floorBody);
+	floor = new Floor(wVec2(GRAVITY_X, GRAVITY_Y), 0, floorBody);
 }
 
 void ModulePhysics::integrator()
@@ -402,9 +422,11 @@ wBody* ModulePhysics::CreateCircle(float r, p2Point<float> pos)
 	return wbody;
 }
 
+
 void wBody::SetMass(float _mass)
 {
 	mass = _mass;
+
 }
 
 
@@ -432,10 +454,12 @@ void wBody::SetRestitution(float _restitution)
 {
 	restitution = _restitution;
 }
+
 wVec2 wBody::GetSpeed()
 {
 	return speed;
 }
+
 p2Point<float> wBody::GetPosition()
 {
 	return bPos;

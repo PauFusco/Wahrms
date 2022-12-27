@@ -6,7 +6,9 @@
 
 // Define Physics Globals here
 #define GRAVITY_X 0.0f
+
 #define GRAVITY_Y 0.05f
+
 
 // Meters to pixels and reverse (transformation and coeficient)
 #define PIXELS_PER_METER 50.0f // if touched change METER_PER_PIXEL too
@@ -98,7 +100,9 @@ public:
 	bodyType btype;
 	wBodyClass wclass;
 
+
 	wVec2 gF, bF, fF, dF, tF; // Gravity, bounce, friction, drag, total
+
 
 	float tx = 0;
 	float ty = 0;
@@ -112,7 +116,7 @@ private:
 	float restitution = 1;
 	p2Point<float> bPos; // Position in meters
 	wVec2 speed;
-	
+
 };
 
 class Floor
@@ -161,6 +165,10 @@ public:
 private:
 	p2List<wBody*>* Bodies;
 	bool debug = true;
+
+
+	Floor* floor;
+
 
 	IntegrationMethod IntMeth = IntegrationMethod::IMPLICIT_EULER;
 	char* methCharie = "IMPLICIT EULER <";
