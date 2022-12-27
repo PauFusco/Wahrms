@@ -6,7 +6,7 @@
 
 // Define Physics Globals here
 #define GRAVITY_X 0.0f
-#define GRAVITY_Y -23.0f
+#define GRAVITY_Y 0.05f
 
 // Meters to pixels and reverse (transformation and coeficient)
 #define PIXELS_PER_METER 50.0f // if touched change METER_PER_PIXEL too
@@ -14,7 +14,6 @@
 
 #define METERS_TO_PIXELS(m) ((int) (PIXELS_PER_METER * m))
 #define PIXEL_TO_METERS(p)  ((float) METER_PER_PIXEL * p)
-
 
 // b2Vec2 equivalent
 class wVec2 {
@@ -54,14 +53,14 @@ enum class ColliderType
 	UNKNOWN
 };
 
-enum class Integrator
+
+enum class IntegrationMethod
 {
 	IMPLICIT_EULER,
 	SYMPLECTIC_EULER,
-	VERLET
-
+	VELOCITY_VERLET,
+	UNKNOWN
 };
-
 
 // Collider of a wBody is itself
 class wBody
@@ -73,20 +72,22 @@ public:
 
 	// Setters
 	void SetLinearVelocity(wVec2 v);
-	void SetLinearAcceleration(wVec2 a);
 	void SetPosition(p2Point<float> position);
 	
 	void SetWidth(int iwidth);
 	void SetHeight(int iheight);
+	void SetMass(float _mass);
+	void SetRestitution(float _restitution);
 		
 	// Getters
 	wVec2 GetSpeed();
 	unsigned int GetMass();
-	wVec2 GetAcceleration();
+
 	p2Point<float> GetPosition();
 	
 	int GetWidth();
 	int GetHeight();
+	float GetRestitution();
 
 	void OnCollision(wBody* Body2);
 
@@ -97,14 +98,21 @@ public:
 	bodyType btype;
 	wBodyClass wclass;
 
+	wVec2 gF, bF, fF, dF, tF; // Gravity, bounce, friction, drag, total
+
+	float tx = 0;
+	float ty = 0;
+	
 	bool IsCollisionListener = false;
 
 private:
 	int width, height;
-	unsigned int mass = 1;
+	float mass = 1;
 	unsigned int elasticCoef = 1;
+	float restitution = 1;
 	p2Point<float> bPos; // Position in meters
-	wVec2 speed, acceleration;
+	wVec2 speed;
+	
 };
 
 class Floor
@@ -119,7 +127,7 @@ public:
 public:
 	wBody* floorBody;
 	
-	wVec2 gravity;
+	wVec2 gravity = wVec2(GRAVITY_X, GRAVITY_Y);
 	float frictionCoef;
 
 };
@@ -146,7 +154,18 @@ public:
 
 	void CreateFloor(); // Create rectangle on the bottom on the screen and put it in the list (use class??)
 
+	void integrator();
+
+	void printDebugInfo();
+
 private:
 	p2List<wBody*>* Bodies;
 	bool debug = true;
+
+	IntegrationMethod IntMeth = IntegrationMethod::IMPLICIT_EULER;
+	char* methCharie = "IMPLICIT EULER <";
+	char* methCharse = "SYMPLECTIC EULER <";
+	char* methCharvv = "VELOCITY VERLET <";
+
+	const char* gravChar;
 };
