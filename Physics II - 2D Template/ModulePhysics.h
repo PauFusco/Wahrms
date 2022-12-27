@@ -53,6 +53,7 @@ enum class ColliderType
 	UNKNOWN
 };
 
+
 enum class IntegrationMethod
 {
 	IMPLICIT_EULER,
@@ -78,6 +79,8 @@ public:
 		
 	// Getters
 	wVec2 GetSpeed();
+	unsigned int GetMass();
+
 	p2Point<float> GetPosition();
 	
 	int GetWidth();
@@ -143,7 +146,6 @@ public:
 	void addBodyToList(wBody* body); // Add body to the list to be able to check collisions
 
 	void destroyBody(wBody* body);
-
 
 	void CreateFloor(); // Create rectangle on the bottom on the screen and put it in the list (use class??)
 
