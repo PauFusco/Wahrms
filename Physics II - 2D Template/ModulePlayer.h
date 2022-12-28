@@ -26,8 +26,12 @@ public:
 	bool CleanUp();
 
 public:
-	bool isDead = false;
-	int HP = 10;
 	wBody* plBody;
+	wBody* plBody2;
 	p2Point<float> pos; // Render Position (pixels)
+
+	p2List<wBody*> circles;
+
+	int HP = 5;
+	bool alive = true;
 };

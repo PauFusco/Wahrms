@@ -10,6 +10,7 @@ Application::Application()
 	player = new ModulePlayer(this);
 	scene_intro = new ModuleSceneIntro(this);
 	physics = new ModulePhysics(this);
+	fonts = new ModuleFonts(this);
 
 	// The order of calls is very important!
 	// Modules will Init() Start() and Update in this order
@@ -22,7 +23,8 @@ Application::Application()
 	AddModule(textures);
 	AddModule(input);
 	AddModule(audio);
-	
+	AddModule(fonts);
+
 	// Scenes
 	AddModule(scene_intro);
 	
@@ -74,6 +76,8 @@ update_status Application::Update()
 	update_status ret = UPDATE_CONTINUE;
 	p2List_item<Module*>* item = list_modules.getFirst();
 
+	start_time = Clock::now();
+
 	while(item != NULL && ret == UPDATE_CONTINUE)
 	{
 		if(item->data->IsEnabled())
@@ -98,7 +102,18 @@ update_status Application::Update()
 			ret = item->data->PostUpdate();
 		item = item->next;
 	}
-
+	
+	// Frame Rate control
+	end_time = Clock::now();
+	frame_time = duration_cast<milliseconds>(end_time - start_time).count();
+	
+	if (physics->dtScheme == DeltaTimeScheme::VARIABLE) {
+		if (frame_time < (1 / physics->fps * 1000))
+		{
+			SDL_Delay((1 / physics->fps * 1000) - frame_time);
+		}
+	}
+	//LOG("%d milliseconds", frame_time);
 	return ret;
 }
 
@@ -113,6 +128,7 @@ bool Application::CleanUp()
 		item = item->prev;
 	}
 	return ret;
+	
 }
 
 void Application::AddModule(Module* mod)
