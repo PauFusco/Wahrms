@@ -111,9 +111,12 @@ public:
 	wBodyClass wclass;
 
 
-	wVec2 gF, bF, fF, dF, tF; // Gravity, bounce, friction, drag, total
+	// Gravity, bounce, friction, drag, total
+	wVec2 gF = wVec2(0, 0), bF = wVec2(0, 0),
+		  fF = wVec2(0, 0), dF = wVec2(0, 0),
+		  tF = wVec2(0, 0);
 
-	
+
 	bool IsCollisionListener = false;
 
 private:
@@ -174,6 +177,8 @@ public:
 
 	float fps = 60.0;
 	float dt = 1 / fps;
+	
+	DeltaTimeScheme dtScheme = DeltaTimeScheme::FIXED;
 
 private:
 	p2List<wBody*>* Bodies;
@@ -194,7 +199,7 @@ private:
 	const char* gravChar;
 
 
-	DeltaTimeScheme dtScheme = DeltaTimeScheme::FIXED;
+	
 	char* schemeCharf = "FIXED DELTA TIME <";
 	char* schemeCharv = "VARIABLE DELTA TIME <";
 	char* schemeCharsf = "SEMI-FIXED DELTA TIME <";

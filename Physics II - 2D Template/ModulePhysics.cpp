@@ -40,7 +40,21 @@ update_status ModulePhysics::PreUpdate()
 {
 	if (Bodies != nullptr)
 	{
-		// FPS for physics calculation control
+		// Delta Time Schemes control
+		if (App->input->GetKey(SDL_SCANCODE_F2) == KEY_DOWN)
+		{
+			dtScheme = DeltaTimeScheme::FIXED;
+		}
+		if (App->input->GetKey(SDL_SCANCODE_F3) == KEY_DOWN)
+		{
+			dtScheme = DeltaTimeScheme::SEMI_FIXED;
+		}
+		if (App->input->GetKey(SDL_SCANCODE_F4) == KEY_DOWN)
+		{
+			dtScheme = DeltaTimeScheme::VARIABLE;
+		}
+
+		// FPS for Physics Calculation control
 		if (App->input->GetKey(SDL_SCANCODE_F5) == KEY_DOWN)
 		{
 			fps = 30.0;
@@ -67,7 +81,6 @@ update_status ModulePhysics::PreUpdate()
 		{
 			IntMeth = IntegrationMethod::IMPLICIT_EULER;
 		}
-
 		if (App->input->GetKey(SDL_SCANCODE_F10) == KEY_DOWN)
 		{
 			IntMeth = IntegrationMethod::SYMPLECTIC_EULER;
@@ -312,28 +325,25 @@ void ModulePhysics::integrator()
 
 			bodies->data->gF = wVec2(bodyMass * g.x, bodyMass * g.y);
 
-			// If collision with bouncer, apply bounce force
-			bodies->data->bF = wVec2(0, 0);
-			// If collision with floor, apply fregament
-			bodies->data->fF = wVec2(0, 0);
-			// If in the air, apply drag force
-			bodies->data->dF = wVec2(0, 0);
 
-			float tFx = bodies->data->gF.x + bodies->data->bF.x + bodies->data->fF.x + bodies->data->dF.x;
-			float tFy = bodies->data->gF.y + bodies->data->bF.y + bodies->data->fF.y + bodies->data->dF.y;
-			wVec2 aF = wVec2(tFx / bodyMass, tFy / bodyMass);
+			// CHANGE OTHER FORCES WITH ONCOLLISION, SET THEM TO 0, 0 IF NOT USING THEM
+
+
+			float tFx = bodies->data->gF.x + bodies->data->bF.x +
+						bodies->data->fF.x + bodies->data->dF.x;
 			
+			float tFy = bodies->data->gF.y + bodies->data->bF.y +
+						bodies->data->fF.y + bodies->data->dF.y;
+			
+			wVec2 aF = wVec2(tFx / bodyMass, tFy / bodyMass);
 
-			// TAKE ACCELERATION FROM FORCES CALCULATION AND USE IT TO FIND SPEED
-			// AND POSITION (ORDER DEPENDS ON WHAT INTEGRATION METHOD WE ARE USING)
+
 			p2Point<float> actualPosition = bodies->data->GetPosition();
 			wVec2 actualVelocity = bodies->data->GetSpeed();
 
-			float px, py, vx, vy;
-			px = actualPosition.x;
-			py = actualPosition.y;
-			vx = actualVelocity.x;
-			vy = actualVelocity.y;
+
+			float px = actualPosition.x, py = actualPosition.y,
+				  vx = actualVelocity.x, vy = actualVelocity.y;
 
 			switch (IntMeth) {
 			case(IntegrationMethod::IMPLICIT_EULER):
