@@ -44,10 +44,12 @@ update_status ModulePhysics::PreUpdate()
 		if (App->input->GetKey(SDL_SCANCODE_F5) == KEY_DOWN)
 		{
 			fps = 30.0;
+			dt = 1.0 / fps;
 		}
 		if (App->input->GetKey(SDL_SCANCODE_F6) == KEY_DOWN)
 		{
 			fps = 60.0;
+			dt = 1.0 / fps;
 		}
 
 		// Gravity control
@@ -300,10 +302,7 @@ void ModulePhysics::integrator()
 {
 	p2List_item<wBody*>* bodies;
 	for (bodies = Bodies->getFirst(); bodies != NULL; bodies = bodies->next)
-	{
-		bodies->data->dtx = 1.0/fps;
-		bodies->data->dty = 1.0/fps;
-		
+	{		
 		if (bodies->data->btype != bodyType::STATIC)
 		{
 			//CALCULATE FORCES
@@ -335,47 +334,34 @@ void ModulePhysics::integrator()
 			py = actualPosition.y;
 			vx = actualVelocity.x;
 			vy = actualVelocity.y;
-			float tx, ty;
-			tx = bodies->data->dtx;
-			ty = bodies->data->dty;
 
 			switch (IntMeth) {
 			case(IntegrationMethod::IMPLICIT_EULER):
-				px += vx * tx;
-				py += vy * ty;
+				px += vx * dt;
+				py += vy * dt;
 
-				vx += aF.x * tx;
-				vy += aF.y * ty;
+				vx += aF.x * dt;
+				vy += aF.y * dt;
 				break;
 
 			case(IntegrationMethod::SYMPLECTIC_EULER):
-				vx += aF.x * tx;
-				vy += aF.y * ty;
+				vx += aF.x * dt;
+				vy += aF.y * dt;
 
-				px += vx * tx;
-				py += vy * ty;
+				px += vx * dt;
+				py += vy * dt;
 				break;
 
 			case(IntegrationMethod::VELOCITY_VERLET):
-				px += vx * tx + 0.5 * aF.x * tx * tx;
-				py += vy * ty + 0.5 * aF.y * ty * ty;
+				px += vx * dt + 0.5 * aF.x * dt * dt;
+				py += vy * dt + 0.5 * aF.y * dt * dt;
 
-				vx += aF.x * tx;
-				vy += aF.y * ty;
+				vx += aF.x * dt;
+				vy += aF.y * dt;
 				break;
 
 			default:
 				IntMeth = IntegrationMethod::IMPLICIT_EULER;
-			}
-		
-			// If speed on a variable is 0, reset timer for when it starts moving again
-			if (vx == 0)
-			{
-				bodies->data->dtx = 0;
-			}
-			if (vy == 0)
-			{
-				bodies->data->dty = 0;
 			}
 
 			actualPosition.x = px;

@@ -113,9 +113,6 @@ public:
 
 	wVec2 gF, bF, fF, dF, tF; // Gravity, bounce, friction, drag, total
 
-
-	float dtx;
-	float dty;
 	
 	bool IsCollisionListener = false;
 
@@ -176,6 +173,7 @@ public:
 
 
 	float fps = 60.0;
+	float dt = 1/fps;
 
 private:
 	p2List<wBody*>* Bodies;
