@@ -168,11 +168,11 @@ bool ModulePhysics::CleanUp()
 	Bodies->clear();
 	delete Bodies;
 
-	p2List_item<wBody*>* bodies;
+	//p2List_item<wBody*>* bodies;
 	//for (bodies = Bodies->getFirst(); bodies != NULL; bodies = bodies->next)
-	{
-		//Bodies->del(bodies);
-	}
+	//{
+	//	Bodies->del(bodies);
+	//}
 
 	return true;
 }
@@ -370,7 +370,7 @@ void ModulePhysics::integrator()
 			actualVelocity.x = vx;
 			actualVelocity.y = vy;
 
-			LOG("vy: %f", vy);
+			//LOG("vy: %f", vy);
 
 			bodies->data->SetPosition(actualPosition);
 			bodies->data->SetLinearVelocity(actualVelocity);

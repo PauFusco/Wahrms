@@ -173,7 +173,7 @@ public:
 
 
 	float fps = 60.0;
-	float dt = 1/fps;
+	float dt = 1 / fps;
 
 private:
 	p2List<wBody*>* Bodies;

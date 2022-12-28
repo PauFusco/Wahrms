@@ -112,7 +112,7 @@ update_status Application::Update()
 		SDL_Delay((1 / physics->fps * 1000) - frame_time);
 	}
 	
-	LOG("%d milliseconds", frame_time);
+	//LOG("%d milliseconds", frame_time);
 	return ret;
 }
 
