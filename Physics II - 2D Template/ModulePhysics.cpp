@@ -1,5 +1,6 @@
 #include "Globals.h"
 #include "Application.h"
+#include "ModulePlayer.h"
 #include "ModulePhysics.h"
 #include "ModulePlayer.h"
 #include "ModuleFonts.h"
@@ -148,7 +149,9 @@ void wBody::OnCollision(wBody* Body2)
 
 		if (Body2->ctype == ColliderType::PLAYER) {
 
-			App->player->HP--;
+			App->player->HP--;		
+			App->player->isDead = true;
+
 
 		}
 	}

@@ -145,6 +145,27 @@ update_status ModulePlayer::Update()
 
 		if (App->input->GetKey(SDL_SCANCODE_2) == KEY_REPEAT)
 		{
+		if (plBody2 != nullptr)
+		{
+			if (App->input->GetKey(SDL_SCANCODE_E) == KEY_DOWN)
+			{
+				App->physics->destroyBody(plBody2);
+
+			}
+		}
+
+		if (App->input->GetKey(SDL_SCANCODE_1) == KEY_DOWN)
+		{
+
+			p2Point<float> position;
+			position.x = 5;
+			position.y = 1;
+
+			circles.add(App->physics->CreateCircle(3, position));
+		}
+
+		if (App->input->GetKey(SDL_SCANCODE_2) == KEY_REPEAT)
+		{
 			if (circles.getLast() != NULL)
 			{
 				App->physics->destroyBody(circles.getLast()->data);
