@@ -111,7 +111,7 @@ update_status ModulePhysics::PostUpdate()
 				thisRect.w = bodies->data->GetWidth();
 				thisRect.h = bodies->data->GetHeight();
 
-				App->renderer->DrawQuad(thisRect, 255, 255, 255, 255, true, true);
+				App->renderer->DrawQuad(thisRect, 255, 255, 255, 255, false, true);
 
 				App->renderer->DrawCircle(thisRect.x, thisRect.y, 1, 255, 0, 0);
 
@@ -296,9 +296,6 @@ void ModulePhysics::integrator()
 		if (bodies->data->btype != bodyType::STATIC)
 		{
 			//CALCULATE FORCES
-
-
-
 			float bodyMass = bodies->data->GetMass();
 
 			wVec2 g = wVec2(GRAVITY_X, GRAVITY_Y);
@@ -334,7 +331,6 @@ void ModulePhysics::integrator()
 			tx = bodies->data->tx;
 			ty = bodies->data->ty;
 
-			
 
 			switch (IntMeth) {
 			case(IntegrationMethod::IMPLICIT_EULER):
@@ -422,6 +418,26 @@ wBody* ModulePhysics::CreateCircle(float r, p2Point<float> pos)
 	return wbody;
 }
 
+wBody* ModulePhysics::CreateRectangle(float width, float height, p2Point<float> position)
+{
+	wBody* wbody = new wBody();
+
+	wbody->wclass = wBodyClass::SQUARE;
+	wbody->SetPosition(position);
+	wbody->SetLinearVelocity(wVec2(0, 0));
+	
+	wbody->SetWidth(METERS_TO_PIXELS(width));
+	wbody->SetHeight(METERS_TO_PIXELS(height));
+
+	wbody->SetMass(1);
+
+	wbody->ctype = ColliderType::UNKNOWN;
+	wbody->btype = bodyType::DYNAMIC;
+
+	addBodyToList(wbody);
+
+	return wbody;
+}
 
 void wBody::SetMass(float _mass)
 {
@@ -522,7 +538,9 @@ void wBody::OnCollision(wBody* Body2)
 
 	if (GetPosition().y < Body2->GetPosition().y)
 	{
-
+		p2Point<float> pos;
+		pos.x = GetPosition().x;
+		pos.y = Body2->GetPosition().y - PIXEL_TO_METERS(GetWidth());
+		SetPosition(pos);
 	}
-	
 }

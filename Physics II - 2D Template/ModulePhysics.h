@@ -150,6 +150,8 @@ public:
 public:
 	wBody* CreateCircle(float r, p2Point<float> pos);
 
+	wBody* CreateRectangle(float width, float height, p2Point<float> position);
+
 	void CheckCollision(); // Check collisions of all the elements in the body list
 	
 	void addBodyToList(wBody* body); // Add body to the list to be able to check collisions
