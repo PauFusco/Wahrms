@@ -278,6 +278,16 @@ void ModulePhysics::CheckCollision()
 
 				}
 			}
+			if (bodies->data->ctype == ColliderType::PLAYER)
+			{
+				if (bodies2->data->ctype == ColliderType::BULLET)
+				{
+					App->player->HP--;
+				}
+			}
+
+
+
 		}
 	}
 

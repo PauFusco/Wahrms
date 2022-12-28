@@ -31,4 +31,7 @@ public:
 	p2Point<float> pos; // Render Position (pixels)
 
 	p2List<wBody*> circles;
+
+	int HP = 5;
+	bool alive = true;
 };

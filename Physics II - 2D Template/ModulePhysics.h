@@ -50,6 +50,7 @@ enum class ColliderType
 	PLAYER,
 	FLOOR,
 	BUMPER,
+	BULLET,
 	AIR, // If we make a static square
 		 //	to occupy everything and make
 		 // it slow with air friction
