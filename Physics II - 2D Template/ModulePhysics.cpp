@@ -149,28 +149,50 @@ update_status ModulePhysics::PostUpdate()
 
 void ModulePhysics::printDebugInfo()
 {
+	// Delta Time Scheme debug
+	App->fonts->BlitText(0, 0, 0, "DELTA TIME SCHEMES;");
+	switch (dtScheme)
+	{
+	case(DeltaTimeScheme::FIXED):
+		App->fonts->BlitText(160, 0, 0, schemeCharf);
+		break;
+	case(DeltaTimeScheme::SEMI_FIXED):
+		App->fonts->BlitText(160, 0, 0, schemeCharsf);
+		break;
+	case(DeltaTimeScheme::VARIABLE):
+		App->fonts->BlitText(160, 0, 0, schemeCharv);
+		break;
+	}
+
+	// FPS count debug
+	string temp = to_string(1.0 / App->frame_time_TRUE * 1000);
+	frametimeChar = temp.c_str();
+
+	App->fonts->BlitText(0, 15, 0, "ACTUAL FPS;");
+	App->fonts->BlitText(130, 15, 0, frametimeChar);
+
+
 	// Integration Method debug
-	App->fonts->BlitText(0, 0, 0, "INTEGRATION METHOD;");
+	App->fonts->BlitText(0, 45, 0, "INTEGRATION METHOD;");
 	switch (IntMeth)
 	{
 	case(IntegrationMethod::IMPLICIT_EULER):
-		App->fonts->BlitText(160, 0, 0, methCharie);
+		App->fonts->BlitText(160, 45, 0, methCharie);
 		break;
 	case(IntegrationMethod::SYMPLECTIC_EULER):
-		App->fonts->BlitText(160, 0, 0, methCharse);
+		App->fonts->BlitText(160, 45, 0, methCharse);
 		break;
 	case(IntegrationMethod::VELOCITY_VERLET):
-		App->fonts->BlitText(160, 0, 0, methCharvv);
+		App->fonts->BlitText(160, 45, 0, methCharvv);
 		break;
 	}
 
 	// Gravity acceleration debug
-
-	string temp = to_string(floor->gravity.y);
-
+	temp = to_string(floor->gravity.y);
 	gravChar = temp.c_str();
-	App->fonts->BlitText(0, 15, 0, "ACTUAL GRAVITY;");
-	App->fonts->BlitText(130, 15, 0, gravChar);
+	
+	App->fonts->BlitText(0, 60, 0, "ACTUAL GRAVITY;");
+	App->fonts->BlitText(130, 60, 0, gravChar);
 }
 
 // Called before quitting

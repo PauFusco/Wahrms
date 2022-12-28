@@ -201,9 +201,10 @@ private:
 
 
 	
-	char* schemeCharf = "FIXED DELTA TIME <";
-	char* schemeCharv = "VARIABLE DELTA TIME <";
-	char* schemeCharsf = "SEMI-FIXED DELTA TIME <";
+	char* schemeCharf  = "FIXED DELTA TIME <";
+	char* schemeCharsf = "SEMI_FIXED DELTA TIME <";
+	char* schemeCharv  = "VARIABLE DELTA TIME <";
+	
 
 	const char* frametimeChar;
 };
