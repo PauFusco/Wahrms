@@ -7,7 +7,7 @@
 // Define Physics Globals here
 #define GRAVITY_X 0.0f
 
-#define GRAVITY_Y 0.05f
+#define GRAVITY_Y 7.0f
 
 
 // Meters to pixels and reverse (transformation and coeficient)
