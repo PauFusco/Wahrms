@@ -298,7 +298,7 @@ void ModulePhysics::integrator()
 			//CALCULATE FORCES
 			float bodyMass = bodies->data->GetMass();
 
-			wVec2 g = wVec2(GRAVITY_X, GRAVITY_Y);
+			wVec2 g = wVec2(PIXEL_TO_METERS(floor->gravity.x), PIXEL_TO_METERS(floor->gravity.y));
 			bodies->data->gF = wVec2(bodyMass * g.x, bodyMass * g.y);
 
 			// If collision with bouncer, apply bounce force
