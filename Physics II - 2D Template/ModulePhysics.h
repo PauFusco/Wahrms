@@ -7,7 +7,9 @@
 // Define Physics Globals here
 #define GRAVITY_X 0.0f
 
+
 #define GRAVITY_Y 10.0f
+
 
 
 
