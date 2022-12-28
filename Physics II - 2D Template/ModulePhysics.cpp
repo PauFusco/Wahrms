@@ -229,6 +229,8 @@ void ModulePhysics::CheckCollision()
 						if (distance < radius)
 						{
 							bodies->data->OnCollision(bodies2->data);
+
+
 						}
 						
 					}
@@ -341,14 +343,14 @@ void ModulePhysics::CreateFloor()
 	wBody* floorBody = new wBody();
 
 	p2Point<float> floorPos;
-	floorPos.x = PIXEL_TO_METERS(0 + 5);
-	floorPos.y = PIXEL_TO_METERS(600 -2);
+	floorPos.x = PIXEL_TO_METERS(0);
+	floorPos.y = PIXEL_TO_METERS(600);
 
 	floorBody->SetPosition(floorPos);
 	floorBody->SetLinearVelocity(wVec2(0, 0));
 
-	floorBody->SetWidth(SCREEN_WIDTH / 6);
-	floorBody->SetHeight(SCREEN_HEIGHT / 5 - floorPos.y);
+	floorBody->SetWidth(SCREEN_WIDTH);
+	floorBody->SetHeight(SCREEN_HEIGHT - floorPos.y);
 
 	floorBody->SetMass(floorBody->GetHeight() * floorBody->GetWidth());
 
@@ -551,6 +553,8 @@ float wBody::GetRestitution()
 }
 void wBody::OnCollision(wBody* Body2)
 {
+	
+
 	if (wclass == wBodyClass::CIRCLE && Body2->wclass == wBodyClass::CIRCLE)
 	{
 
