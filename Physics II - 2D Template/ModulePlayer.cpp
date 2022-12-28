@@ -47,27 +47,27 @@ update_status ModulePlayer::Update()
 	{
 		wVec2 vel;
 		vel.y = 0;
-		vel.x = 0.5;
+		vel.x = 5;
 		plBody->SetLinearVelocity(vel);
 	}
 	if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_DOWN)
 	{
 		wVec2 vel;
 		vel.y = 0;
-		vel.x = -0.5;
+		vel.x = -5;
 		plBody->SetLinearVelocity(vel);
 	}
 	if (App->input->GetKey(SDL_SCANCODE_UP) == KEY_DOWN)
 	{
 		wVec2 vel;
-		vel.y = -0.5;
+		vel.y = -5;
 		vel.x = 0;
 		plBody->SetLinearVelocity(vel);
 	}
 	if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_DOWN)
 	{
 		wVec2 vel;
-		vel.y = 0.5;
+		vel.y = 5;
 		vel.x = 0;
 		plBody->SetLinearVelocity(vel);
 	}

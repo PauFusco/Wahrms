@@ -5,10 +5,11 @@
 #include "math.h"
 #include "p2Point.h"
 #include <string>
+#include "ModulePlayer.h"
 
 using namespace std;
 
-float dt = 0.1666667;
+float dt = 0.01666667;
 
 ModulePhysics::ModulePhysics(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
@@ -38,6 +39,9 @@ bool ModulePhysics::Start()
 // 
 update_status ModulePhysics::PreUpdate()
 {
+	
+	LOG("sfdehghuigrtfiojonejgutijeupi %f", App->player->plBody->GetPosition().x);
+
 	if (Bodies != nullptr)
 	{
 
@@ -230,7 +234,10 @@ void ModulePhysics::CheckCollision()
 					}
 					else if (bodies2->data->wclass == wBodyClass::SQUARE)
 					{
-						if (bodies->data->GetPosition().y < bodies2->data->GetPosition().y)
+						
+						if (bodies->data->GetPosition().y < bodies2->data->GetPosition().y && 
+							bodies->data->GetPosition().x + PIXEL_TO_METERS(bodies->data->GetWidth()) > bodies2->data->GetPosition().x   &&
+							bodies->data->GetPosition().x - PIXEL_TO_METERS(bodies->data->GetWidth()) < (bodies2->data->GetPosition().x + PIXEL_TO_METERS(bodies2->data->GetWidth())) )
 						{
 							p2Point<float> FloorPos;
 
@@ -245,6 +252,72 @@ void ModulePhysics::CheckCollision()
 								bodies->data->OnCollision(bodies2->data);
 								
 								
+
+							}
+						}
+						else if (bodies->data->GetPosition().x > (bodies2->data->GetPosition().x + PIXEL_TO_METERS(bodies2->data->GetWidth())) &&
+							bodies->data->GetPosition().y > bodies2->data->GetPosition().y &&
+							bodies->data->GetPosition().y - PIXEL_TO_METERS(bodies->data->GetWidth()) < (bodies2->data->GetPosition().y + PIXEL_TO_METERS(bodies2->data->GetHeight())) )
+						{
+							p2Point<float> FloorPos;
+
+							FloorPos.x = bodies2->data->GetPosition().x + PIXEL_TO_METERS(bodies2->data->GetWidth());
+							FloorPos.y = bodies->data->GetPosition().y;
+
+							float radius = PIXEL_TO_METERS(bodies->data->GetWidth());
+							float distance = bodies->data->GetPosition().DistanceTo(FloorPos);
+
+							if (distance < radius)
+							{
+								bodies->data->OnCollision(bodies2->data);
+
+
+
+							}
+						}
+						else if (bodies->data->GetPosition().y > bodies2->data->GetPosition().y + PIXEL_TO_METERS(bodies2->data->GetHeight()) &&
+							bodies->data->GetPosition().x + PIXEL_TO_METERS(bodies->data->GetWidth()) > bodies2->data->GetPosition().x &&
+							bodies->data->GetPosition().x - PIXEL_TO_METERS(bodies->data->GetWidth()) < (bodies2->data->GetPosition().x + PIXEL_TO_METERS(bodies2->data->GetWidth())))
+						{
+							
+							p2Point<float> FloorPos;
+
+							FloorPos.x = bodies->data->GetPosition().x;
+							FloorPos.y = bodies2->data->GetPosition().y + PIXEL_TO_METERS(bodies2->data->GetHeight());
+
+							float radius = PIXEL_TO_METERS(bodies->data->GetWidth());
+							float distance = bodies->data->GetPosition().DistanceTo(FloorPos);
+
+							
+
+							if (distance < radius)
+							{
+								bodies->data->OnCollision(bodies2->data);
+								
+								
+
+
+							}
+						}
+						else if (bodies->data->GetPosition().x  < (bodies2->data->GetPosition().x ) &&
+							bodies->data->GetPosition().y + PIXEL_TO_METERS(bodies->data->GetWidth()) > bodies2->data->GetPosition().y &&
+							bodies->data->GetPosition().y - PIXEL_TO_METERS(bodies->data->GetWidth()) < (bodies2->data->GetPosition().y + PIXEL_TO_METERS(bodies2->data->GetHeight())))
+						{
+							p2Point<float> FloorPos;
+
+							FloorPos.x = bodies2->data->GetPosition().x ;
+							FloorPos.y = bodies->data->GetPosition().y;
+
+							float radius = PIXEL_TO_METERS(bodies->data->GetWidth());
+							float distance = bodies->data->GetPosition().DistanceTo(FloorPos);
+							
+
+							if (distance < radius)
+							{
+								bodies->data->OnCollision(bodies2->data);
+								
+								
+
 
 							}
 						}
@@ -268,14 +341,14 @@ void ModulePhysics::CreateFloor()
 	wBody* floorBody = new wBody();
 
 	p2Point<float> floorPos;
-	floorPos.x = PIXEL_TO_METERS(0);
-	floorPos.y = PIXEL_TO_METERS(600);
+	floorPos.x = PIXEL_TO_METERS(0 + 5);
+	floorPos.y = PIXEL_TO_METERS(600 -2);
 
 	floorBody->SetPosition(floorPos);
 	floorBody->SetLinearVelocity(wVec2(0, 0));
 
-	floorBody->SetWidth(SCREEN_WIDTH);
-	floorBody->SetHeight(SCREEN_HEIGHT - floorPos.y);
+	floorBody->SetWidth(SCREEN_WIDTH / 6);
+	floorBody->SetHeight(SCREEN_HEIGHT / 5 - floorPos.y);
 
 	floorBody->SetMass(floorBody->GetHeight() * floorBody->GetWidth());
 
@@ -301,7 +374,7 @@ void ModulePhysics::integrator()
 
 			float bodyMass = bodies->data->GetMass();
 
-			wVec2 g = wVec2(GRAVITY_X, GRAVITY_Y);
+			wVec2 g = wVec2(floor->gravity.x, floor->gravity.y);
 			bodies->data->gF = wVec2(bodyMass * g.x, bodyMass * g.y);
 
 			// If collision with bouncer, apply bounce force
@@ -386,7 +459,7 @@ void ModulePhysics::integrator()
 			actualVelocity.x = vx;
 			actualVelocity.y = vy;
 
-			LOG("vy: %f", vy);
+			//LOG("vy: %f", vy);
 
 			bodies->data->SetPosition(actualPosition);
 			bodies->data->SetLinearVelocity(actualVelocity);
@@ -485,11 +558,16 @@ void wBody::OnCollision(wBody* Body2)
 		LOG("This is a collision");
 
 		wVec2 velocity1;
-		velocity1.x = 0;
+
+		wVec2 velocity2;
+		//velocity1.x = 0;
 
 		//if (GetSpeed().x != 0)
 		{
-			velocity1.x = (GetSpeed().x * (mass - Body2->mass) + 2 * Body2->mass * Body2->GetSpeed().x) / (mass + Body2->mass);
+			//velocity1.x = (GetSpeed().x * (mass - Body2->mass) + 2 * Body2->mass * Body2->GetSpeed().x) / (mass + Body2->mass); //attempt 2
+			velocity1.x = (((mass - Body2->mass) / (mass + Body2->mass)) * GetSpeed().x + ((2 * Body2->mass) / (mass + Body2->mass)) * Body2->GetSpeed().x) * GetRestitution() * Body2->GetRestitution(); // attempt 3
+
+			velocity2.x = (((2 * mass) / (mass + Body2->mass)) * GetSpeed().x + ((Body2->mass - mass) / (mass + Body2->mass)) * Body2->GetSpeed().x) * GetRestitution() * Body2->GetRestitution(); // attempt 3
 			LOG("COLLIDING NOW");
 			//velocity1.x = GetSpeed().x - ((2 * Body2->mass) / (mass + Body2->mass)) * (((GetSpeed().x - Body2->GetSpeed().x) / (GetPosition().x - Body2->GetPosition().x)) / ((GetPosition().x - Body2->GetPosition().x) * (GetPosition().x - Body2->GetPosition().x))) * GetPosition().x - Body2->GetPosition().x * 0.1;
 		}
@@ -497,11 +575,17 @@ void wBody::OnCollision(wBody* Body2)
 		//if (GetSpeed().y != 0)
 		{
 			//velocity1.y = GetSpeed().y - ((2 * Body2->mass) / (mass + Body2->mass)) * (((GetSpeed().y - Body2->GetSpeed().y) / (GetPosition().y - Body2->GetPosition().y)) / ((GetPosition().y - Body2->GetPosition().y) * (GetPosition().y - Body2->GetPosition().y))) * GetPosition().y - Body2->GetPosition().y * 0.1;
-			velocity1.y = (GetSpeed().y * (mass - Body2->mass) + 2 * Body2->mass * Body2->GetSpeed().y) / (mass + Body2->mass);
+			//velocity1.y = (GetSpeed().y * (mass - Body2->mass) + 2 * Body2->mass * Body2->GetSpeed().y) / (mass + Body2->mass); // attempt 2
+
+			velocity1.y = (((mass - Body2->mass) / (mass + Body2->mass)) * GetSpeed().y + ((2 * Body2->mass) / (mass + Body2->mass)) * Body2->GetSpeed().y) * GetRestitution() * Body2->GetRestitution(); // attempt 3
+			velocity2.y = (((2 * mass) / (mass + Body2->mass)) * GetSpeed().y + ((Body2->mass - mass) / (mass + Body2->mass)) * Body2->GetSpeed().y) * GetRestitution() * Body2->GetRestitution(); // attempt 3
+			LOG("fdolihjiurghdnsviurjiemfiljufsdpfogierjfosdekigotsjguiotrhguijvfisoerfkioperhgu7irtwguwipfkwpjoeirjfowr8eighwjfper %f", GetSpeed().x);
 		}
 		
 
 		SetLinearVelocity(velocity1);
+		Body2->SetLinearVelocity(velocity2);
+		//IsCollisionListener = false;
 		LOG("X %f", GetPosition().x);
 		LOG("Y %f", GetPosition().y);
 
@@ -512,10 +596,36 @@ void wBody::OnCollision(wBody* Body2)
 
 		wVec2 velocity1;
 		velocity1.x = GetSpeed().x;
+		velocity1.y = GetSpeed().y;
 
 		LOG("COLLIDING NOW %f", (Body2->GetSpeed().x ));
+
+		if (GetPosition().y < Body2->GetPosition().y &&
+			GetPosition().x + PIXEL_TO_METERS(GetWidth()) > Body2->GetPosition().x &&
+			GetPosition().x - PIXEL_TO_METERS(GetWidth()) < (Body2->GetPosition().x + PIXEL_TO_METERS(Body2->GetWidth())))
+		{
+			velocity1.y = (GetSpeed().y * (mass - Body2->mass) + 2 * Body2->mass * Body2->GetSpeed().y) / (mass + Body2->mass) * GetRestitution() * Body2->GetRestitution();
+		}
+		else if (GetPosition().x > (Body2->GetPosition().x + PIXEL_TO_METERS(Body2->GetWidth())) &&
+			GetPosition().y > Body2->GetPosition().y &&
+			GetPosition().y - PIXEL_TO_METERS(GetWidth()) < (Body2->GetPosition().y + PIXEL_TO_METERS(Body2->GetHeight())))
+		{
+			velocity1.x = (GetSpeed().x * (mass - Body2->mass) + 2 * Body2->mass * Body2->GetSpeed().x) / (mass + Body2->mass) * GetRestitution() * Body2->GetRestitution();
+		}
+		else if (GetPosition().y > Body2->GetPosition().y + PIXEL_TO_METERS(Body2->GetHeight()) &&
+			GetPosition().x + PIXEL_TO_METERS(GetWidth()) > Body2->GetPosition().x &&
+			GetPosition().x - PIXEL_TO_METERS(GetWidth()) < (Body2->GetPosition().x + PIXEL_TO_METERS(Body2->GetWidth())))
+		{
+			velocity1.y = (GetSpeed().y * (mass - Body2->mass) + 2 * Body2->mass * Body2->GetSpeed().y) / (mass + Body2->mass) * GetRestitution() * Body2->GetRestitution();
+		}
+		else if (GetPosition().x < (Body2->GetPosition().x) &&
+			GetPosition().y + PIXEL_TO_METERS(GetWidth()) > Body2->GetPosition().y &&
+			GetPosition().y - PIXEL_TO_METERS(GetWidth()) < (Body2->GetPosition().y + PIXEL_TO_METERS(Body2->GetHeight())))
+		{
+			velocity1.x = (GetSpeed().x * (mass - Body2->mass) + 2 * Body2->mass * Body2->GetSpeed().x) / (mass + Body2->mass) * GetRestitution() * Body2->GetRestitution();
+		}
 		//velocity1.x = (GetSpeed().x * (mass - Body2->mass) + 2 * Body2->mass * Body2->GetSpeed().x) / (mass + Body2->mass) * GetRestitution() * Body2->GetRestitution();
-		velocity1.y = (GetSpeed().y * (mass - Body2->mass) + 2 * Body2->mass * Body2->GetSpeed().y) / (mass + Body2->mass) * GetRestitution() * Body2->GetRestitution();
+		
 
 		SetLinearVelocity(velocity1);
 	}
