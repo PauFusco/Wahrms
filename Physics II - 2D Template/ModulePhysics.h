@@ -7,7 +7,10 @@
 // Define Physics Globals here
 #define GRAVITY_X 0.0f
 
-#define GRAVITY_Y 9.5f
+
+#define GRAVITY_Y 10.0f
+
+
 
 
 // Meters to pixels and reverse (transformation and coeficient)
@@ -49,6 +52,7 @@ enum class ColliderType
 	PLAYER,
 	FLOOR,
 	BUMPER,
+	BULLET,
 	AIR, // If we make a static square
 		 //	to occupy everything and make
 		 // it slow with air friction
@@ -63,6 +67,15 @@ enum class IntegrationMethod
 	VELOCITY_VERLET,
 	UNKNOWN
 };
+
+enum class DeltaTimeScheme
+{
+	FIXED,
+	VARIABLE,
+	SEMI_FIXED,
+	UNKNOWN
+};
+
 
 // Collider of a wBody is itself
 class wBody
@@ -101,12 +114,12 @@ public:
 	wBodyClass wclass;
 
 
-	wVec2 gF, bF, fF, dF, tF; // Gravity, bounce, friction, drag, total
+	// Gravity, bounce, friction, drag, total
+	wVec2 gF = wVec2(0, 0), bF = wVec2(0, 0),
+		  fF = wVec2(0, 0), dF = wVec2(0, 0),
+		  tF = wVec2(0, 0);
 
 
-	float tx = 0;
-	float ty = 0;
-	
 	bool IsCollisionListener = false;
 
 private:
@@ -150,6 +163,8 @@ public:
 public:
 	wBody* CreateCircle(float r, p2Point<float> pos);
 
+	wBody* CreateRectangle(float width, float height, p2Point<float> position);
+
 	void CheckCollision(); // Check collisions of all the elements in the body list
 	
 	void addBodyToList(wBody* body); // Add body to the list to be able to check collisions
@@ -162,9 +177,17 @@ public:
 
 	void printDebugInfo();
 
+
+	float fps = 60.0;
+	float dt = 1 / fps;
+	
+	DeltaTimeScheme dtScheme = DeltaTimeScheme::FIXED;
+
 private:
 	p2List<wBody*>* Bodies;
 	bool debug = true;
+
+
 
 
 	Floor* floor;
@@ -175,5 +198,14 @@ private:
 	char* methCharse = "SYMPLECTIC EULER <";
 	char* methCharvv = "VELOCITY VERLET <";
 
+
 	const char* gravChar;
+
+
+	
+	char* schemeCharf = "FIXED DELTA TIME <";
+	char* schemeCharv = "VARIABLE DELTA TIME <";
+	char* schemeCharsf = "SEMI-FIXED DELTA TIME <";
+
+	const char* frametimeChar;
 };

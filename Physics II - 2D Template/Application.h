@@ -14,6 +14,11 @@
 #include "ModuleSceneIntro.h"
 #include "ModuleFonts.h"
 
+#include <chrono>
+using namespace std;
+using namespace chrono;
+typedef high_resolution_clock Clock;
+
 class Application
 {
 public:
@@ -43,4 +48,8 @@ public:
 private:
 
 	void AddModule(Module* mod);
+
+	steady_clock::time_point start_time;
+	steady_clock::time_point end_time;
+	long long frame_time;
 };

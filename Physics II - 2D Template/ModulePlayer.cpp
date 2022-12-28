@@ -26,7 +26,7 @@ bool ModulePlayer::Start()
 
 	position.x = 8;
 	//plBody2 = App->physics->CreateCircle(3, position);
-
+	
 	return true;
 }
 
@@ -159,6 +159,3 @@ update_status ModulePlayer::Update()
 
 	return UPDATE_CONTINUE;
 }
-
-
-
