@@ -1,6 +1,8 @@
 #include "Globals.h"
 #include "Application.h"
 #include "ModulePhysics.h"
+#include "ModulePlayer.h"
+#include "ModuleFonts.h"
 #include "math.h"
 #include "p2Point.h"
 
@@ -106,4 +108,56 @@ p2Point<float> wBody::GetPosition()
 void wBody::OnCollision(wBody* Body2)
 {
 
+		LOG("%f", GetSpeed().x);
+		LOG("This is a collision");
+
+		wVec2 velocity1;
+		velocity1.x = 0;
+
+		//if (GetSpeed().x != 0)
+		{
+			velocity1.x = (GetSpeed().x * (mass - Body2->mass) + 2 * Body2->mass * Body2->GetSpeed().x) / (mass + Body2->mass);
+			LOG("COLLIDING NOW");
+			//velocity1.x = GetSpeed().x - ((2 * Body2->mass) / (mass + Body2->mass)) * (((GetSpeed().x - Body2->GetSpeed().x) / (GetPosition().x - Body2->GetPosition().x)) / ((GetPosition().x - Body2->GetPosition().x) * (GetPosition().x - Body2->GetPosition().x))) * GetPosition().x - Body2->GetPosition().x * 0.1;
+		}
+		
+		//if (GetSpeed().y != 0)
+		{
+			//velocity1.y = GetSpeed().y - ((2 * Body2->mass) / (mass + Body2->mass)) * (((GetSpeed().y - Body2->GetSpeed().y) / (GetPosition().y - Body2->GetPosition().y)) / ((GetPosition().y - Body2->GetPosition().y) * (GetPosition().y - Body2->GetPosition().y))) * GetPosition().y - Body2->GetPosition().y * 0.1;
+			velocity1.y = (GetSpeed().y * (mass - Body2->mass) + 2 * Body2->mass * Body2->GetSpeed().y) / (mass + Body2->mass);
+		}
+		
+
+		SetLinearVelocity(velocity1);
+		LOG("X %f", GetPosition().x);
+		LOG("Y %f", GetPosition().y);
+
+	}
+	else if (wclass == wBodyClass::CIRCLE && Body2->wclass == wBodyClass::SQUARE)
+	{
+		//LOG("COLLIDING NOW");
+
+		wVec2 velocity1;
+		velocity1.x = GetSpeed().x;
+
+		LOG("COLLIDING NOW %f", (Body2->GetSpeed().x ));
+		//velocity1.x = (GetSpeed().x * (mass - Body2->mass) + 2 * Body2->mass * Body2->GetSpeed().x) / (mass + Body2->mass) * GetRestitution() * Body2->GetRestitution();
+		velocity1.y = (GetSpeed().y * (mass - Body2->mass) + 2 * Body2->mass * Body2->GetSpeed().y) / (mass + Body2->mass) * GetRestitution() * Body2->GetRestitution();
+
+		SetLinearVelocity(velocity1);
+
+		if (Body2->ctype == ColliderType::PLAYER) {
+
+			App->player->HP--;
+
+		}
+	}
+
+	if (GetPosition().y < Body2->GetPosition().y)
+	{
+		p2Point<float> pos;
+		pos.x = GetPosition().x;
+		pos.y = Body2->GetPosition().y - PIXEL_TO_METERS(GetWidth());
+		SetPosition(pos);
+	}
 }

@@ -26,6 +26,8 @@ public:
 	bool CleanUp();
 
 public:
+	bool isDead = false;
+	int HP = 10;
 	wBody* plBody;
 	p2Point<float> pos; // Render Position (pixels)
 };
