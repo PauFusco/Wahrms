@@ -7,7 +7,8 @@
 // Define Physics Globals here
 #define GRAVITY_X 0.0f
 
-#define GRAVITY_Y 7.0f
+#define GRAVITY_Y 10.0f
+
 
 
 // Meters to pixels and reverse (transformation and coeficient)
@@ -64,6 +65,15 @@ enum class IntegrationMethod
 	UNKNOWN
 };
 
+enum class DeltaTimeScheme
+{
+	FIXED,
+	VARIABLE,
+	SEMI_FIXED,
+	UNKNOWN
+};
+
+
 // Collider of a wBody is itself
 class wBody
 {
@@ -104,8 +114,8 @@ public:
 	wVec2 gF, bF, fF, dF, tF; // Gravity, bounce, friction, drag, total
 
 
-	float tx = 0;
-	float ty = 0;
+	float dtx;
+	float dty;
 	
 	bool IsCollisionListener = false;
 
@@ -164,9 +174,14 @@ public:
 
 	void printDebugInfo();
 
+
+	float fps = 60.0;
+
 private:
 	p2List<wBody*>* Bodies;
 	bool debug = true;
+
+
 
 
 	Floor* floor;
@@ -177,5 +192,14 @@ private:
 	char* methCharse = "SYMPLECTIC EULER <";
 	char* methCharvv = "VELOCITY VERLET <";
 
+
 	const char* gravChar;
+
+
+	DeltaTimeScheme dtScheme = DeltaTimeScheme::FIXED;
+	char* schemeCharf = "FIXED DELTA TIME <";
+	char* schemeCharv = "VARIABLE DELTA TIME <";
+	char* schemeCharsf = "SEMI-FIXED DELTA TIME <";
+
+	const char* frametimeChar;
 };

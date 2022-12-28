@@ -8,7 +8,7 @@
 
 using namespace std;
 
-float dt = 0.1666667;
+
 
 ModulePhysics::ModulePhysics(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
@@ -40,15 +40,24 @@ update_status ModulePhysics::PreUpdate()
 {
 	if (Bodies != nullptr)
 	{
+		// FPS for physics calculation control
+		if (App->input->GetKey(SDL_SCANCODE_F5) == KEY_DOWN)
+		{
+			fps = 30.0;
+		}
+		if (App->input->GetKey(SDL_SCANCODE_F6) == KEY_DOWN)
+		{
+			fps = 60.0;
+		}
 
 		// Gravity control
-		if (App->input->GetKey(SDL_SCANCODE_F7) == KEY_DOWN)
+		if (App->input->GetKey(SDL_SCANCODE_F7) == KEY_REPEAT)
 		{
-			floor->gravity.y -= 0.001;
+			floor->gravity.y -= 1;
 		}
-		if (App->input->GetKey(SDL_SCANCODE_F8) == KEY_DOWN)
+		if (App->input->GetKey(SDL_SCANCODE_F8) == KEY_REPEAT)
 		{
-			floor->gravity.y += 0.001;
+			floor->gravity.y += 1;
 		}
 		
 		// Integration Method control
@@ -66,9 +75,8 @@ update_status ModulePhysics::PreUpdate()
 			IntMeth = IntegrationMethod::VELOCITY_VERLET;
 		}
 		
-
 		integrator();
-
+		
 		CheckCollision();
 
 	}
@@ -293,12 +301,15 @@ void ModulePhysics::integrator()
 	p2List_item<wBody*>* bodies;
 	for (bodies = Bodies->getFirst(); bodies != NULL; bodies = bodies->next)
 	{
+		bodies->data->dtx = 1.0/fps;
+		bodies->data->dty = 1.0/fps;
+		
 		if (bodies->data->btype != bodyType::STATIC)
 		{
 			//CALCULATE FORCES
 			float bodyMass = bodies->data->GetMass();
       
-			wVec2 g = wVec2(PIXEL_TO_METERS(floor->gravity.x), PIXEL_TO_METERS(floor->gravity.y));
+			wVec2 g = wVec2(floor->gravity.x, floor->gravity.y);
 
 			bodies->data->gF = wVec2(bodyMass * g.x, bodyMass * g.y);
 
@@ -320,18 +331,13 @@ void ModulePhysics::integrator()
 			wVec2 actualVelocity = bodies->data->GetSpeed();
 
 			float px, py, vx, vy;
-			//px = PIXEL_TO_METERS(actualPosition.x);
-			//py = PIXEL_TO_METERS(actualPosition.y);
-			//vx = PIXEL_TO_METERS(actualVelocity.x);
-			//vy = PIXEL_TO_METERS(actualVelocity.y);
 			px = actualPosition.x;
 			py = actualPosition.y;
 			vx = actualVelocity.x;
 			vy = actualVelocity.y;
 			float tx, ty;
-			tx = bodies->data->tx;
-			ty = bodies->data->ty;
-
+			tx = bodies->data->dtx;
+			ty = bodies->data->dty;
 
 			switch (IntMeth) {
 			case(IntegrationMethod::IMPLICIT_EULER):
@@ -361,21 +367,16 @@ void ModulePhysics::integrator()
 			default:
 				IntMeth = IntegrationMethod::IMPLICIT_EULER;
 			}
-
+		
+			// If speed on a variable is 0, reset timer for when it starts moving again
 			if (vx == 0)
 			{
-				bodies->data->tx = 0;
+				bodies->data->dtx = 0;
 			}
 			if (vy == 0)
 			{
-				bodies->data->ty = 0;
+				bodies->data->dty = 0;
 			}
-
-			//actualPosition.x = METERS_TO_PIXELS(px);
-			//actualPosition.y = METERS_TO_PIXELS(py);
-			//
-			//actualVelocity.x = METERS_TO_PIXELS(vx);
-			//actualVelocity.y = METERS_TO_PIXELS(vy);
 
 			actualPosition.x = px;
 			actualPosition.y = py;
@@ -387,11 +388,7 @@ void ModulePhysics::integrator()
 
 			bodies->data->SetPosition(actualPosition);
 			bodies->data->SetLinearVelocity(actualVelocity);
-
-			// If speed on a variable is 0, reset timer for when it starts moving again
-			bodies->data->tx = dt;
-			bodies->data->ty = dt;
-		}
+		}	
 	}
 }
 
