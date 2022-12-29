@@ -9,8 +9,6 @@
 
 using namespace std;
 
-
-
 ModulePhysics::ModulePhysics(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
 	debug = true;
@@ -179,6 +177,7 @@ void ModulePhysics::debugKeys()
 		dtScheme = DeltaTimeScheme::VARIABLE;
 	}
 
+
 	// FPS number control
 	if (App->input->GetKey(SDL_SCANCODE_F5) == KEY_DOWN)
 	{
@@ -190,6 +189,7 @@ void ModulePhysics::debugKeys()
 		fps = 60.0;
 		dt = 1.0 / fps;
 	}
+
 
 	// Gravity control
 	if (App->input->GetKey(SDL_SCANCODE_F7) == KEY_DOWN)
@@ -218,6 +218,7 @@ void ModulePhysics::debugKeys()
 		}
 	}
 
+
 	// Integration Method control
 	if (App->input->GetKey(SDL_SCANCODE_F9) == KEY_DOWN)
 	{
@@ -231,6 +232,7 @@ void ModulePhysics::debugKeys()
 	{
 		IntMeth = IntegrationMethod::VELOCITY_VERLET;
 	}
+
 
 	// Drag Coefficient control
 	if (App->input->GetKey(SDL_SCANCODE_O) == KEY_DOWN)
