@@ -117,6 +117,8 @@ public:
 
 	bool IsCollisionListener = false;
 
+	bool applyfF = false;
+
 private:
 	int width, height;
 	float mass = 1;
@@ -141,9 +143,10 @@ public:
 	
 	wVec2 gravity = wVec2(GRAVITY_X, GRAVITY_Y);
 	wVec2 auxGravity;
+	
+	float dragCoef;
+	
 	float frictionCoef;
-	float dragCoef = 0.5f;
-
 };
 
 class ModulePhysics : public Module
@@ -168,7 +171,8 @@ public:
 
 	void destroyBody(wBody* body);
 
-	void CreateFloor(); // Create rectangle on the bottom on the screen and put it in the list (use class??)
+	void CreateFloor(); // Create rectangle on the bottom on
+						// the screen and put it in the list (use class??)
 
 	void integrator();
 
@@ -179,7 +183,8 @@ public:
 
 	float fps = 60.0;
 	float dt = 1 / fps;
-	
+
+
 	DeltaTimeScheme dtScheme = DeltaTimeScheme::SEMI_FIXED;
 
 private:
@@ -199,6 +204,9 @@ private:
 
 
 	const char* dragChar;
+
+	
+	const char* fricChar;
 
 
 	char* schemeCharf = "FIXED DELTA TIME <";

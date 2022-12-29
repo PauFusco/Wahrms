@@ -11,7 +11,7 @@ using namespace std;
 
 ModulePhysics::ModulePhysics(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
-	debug = true;
+
 }
 
 // Destructor
@@ -31,6 +31,8 @@ bool ModulePhysics::Start()
 
 	CreateFloor();
 
+	floor->dragCoef = 0.5, floor->frictionCoef = 0.2;
+
 	return true;
 }
 
@@ -38,12 +40,11 @@ bool ModulePhysics::Start()
 update_status ModulePhysics::PreUpdate()
 {
 	
-	LOG("sfdehghuigrtfiojonejgutijeupi %f", App->player->plBody->GetPosition().x);
+	// LOG("Player position x: %d", App->player->plBody->GetPosition().x);
 
 	if (Bodies != nullptr)
 	{
-		
-		debugKeys();
+		if (debug) debugKeys();
 		
 		integrator();
 		
@@ -59,9 +60,6 @@ update_status ModulePhysics::PostUpdate()
 {
 	if(App->input->GetKey(SDL_SCANCODE_F1) == KEY_DOWN)
 		debug = !debug;
-
-	if(!debug)
-		return UPDATE_CONTINUE;
 	
 	if (Bodies != nullptr)
 	{
@@ -96,8 +94,7 @@ update_status ModulePhysics::PostUpdate()
 			}
 		}
 	}
-	
-	printDebugInfo();
+	if (debug) printDebugInfo();
 	
 	return UPDATE_CONTINUE;
 }
@@ -148,15 +145,25 @@ void ModulePhysics::printDebugInfo()
 	gravChar = temp.c_str();
 	
 	App->fonts->BlitText(0, 75, 0, "ACTUAL GRAVITY;");
-	App->fonts->BlitText(150, 75, 0, gravChar);
+
+	App->fonts->BlitText(130, 75, 0, gravChar);
 
 
 	// Drag Coefficient debug
 	temp = to_string(floor->dragCoef);
 	dragChar = temp.c_str();
 
-	App->fonts->BlitText(0, 90, 0, "DRAG COEFFICIENT;");
-	App->fonts->BlitText(150, 90, 0, dragChar);
+	App->fonts->BlitText(0, 105, 0, "DRAG COEFFICIENT;");
+	App->fonts->BlitText(150, 105, 0, dragChar);
+
+
+	// Friction Coefficient debug
+	temp = to_string(floor->frictionCoef);
+	fricChar = temp.c_str();
+
+	App->fonts->BlitText(0, 135, 0, "FRICTION COEFFICIENT;");
+	App->fonts->BlitText(180, 135, 0, fricChar);
+
 }
 
 void ModulePhysics::debugKeys()
@@ -237,14 +244,27 @@ void ModulePhysics::debugKeys()
 	// Drag Coefficient control
 	if (App->input->GetKey(SDL_SCANCODE_O) == KEY_DOWN)
 	{
-		if (floor->dragCoef <= 1.0f) {
-			floor->dragCoef += 0.1f;
-		}
+		floor->dragCoef += 0.1f;
 	}
 	if (App->input->GetKey(SDL_SCANCODE_I) == KEY_DOWN)
 	{
-		if (floor->dragCoef >= 1.0f) {
-			floor->dragCoef -= 0.1f;
+		floor->dragCoef -= 0.1f;
+	}
+
+
+	// Friction Coefficient control
+	if (App->input->GetKey(SDL_SCANCODE_K) == KEY_DOWN)
+	{
+		if (floor->frictionCoef <= 1.0)
+		{
+			floor->frictionCoef += 0.1f;
+		}
+	}
+	if (App->input->GetKey(SDL_SCANCODE_J) == KEY_DOWN)
+	{
+		if (floor->frictionCoef > 0.1)
+		{
+			floor->frictionCoef -= 0.1f;
 		}
 	}
 }
@@ -354,7 +374,7 @@ void ModulePhysics::CheckCollision()
 						}
 						else if (bodies->data->GetPosition().x > (bodies2->data->GetPosition().x + PIXEL_TO_METERS(bodies2->data->GetWidth())) &&
 							bodies->data->GetPosition().y > bodies2->data->GetPosition().y &&
-							bodies->data->GetPosition().y - PIXEL_TO_METERS(bodies->data->GetWidth()) < (bodies2->data->GetPosition().y + PIXEL_TO_METERS(bodies2->data->GetHeight())) )
+							bodies->data->GetPosition().y - PIXEL_TO_METERS(bodies->data->GetWidth()) < (bodies2->data->GetPosition().y + PIXEL_TO_METERS(bodies2->data->GetHeight())) ) 
 						{
 							p2Point<float> FloorPos;
 
@@ -501,6 +521,18 @@ void ModulePhysics::integrator()
 				bodies->data->dF.y = -actualVelocity.y * actualVelocity.y * floor->dragCoef;
 			}
 
+			if (bodies->data->applyfF)
+			{
+				if (bodies->data->GetSpeed().x < 0)
+				{
+					bodies->data->fF.x = bodies->data->gF.y * floor->frictionCoef;
+				}
+				if (bodies->data->GetSpeed().x > 0)
+				{
+					bodies->data->fF.x = bodies->data->gF.y * -floor->frictionCoef;
+				}
+			}
+
 
 			// CHANGE OTHER FORCES WITH ONCOLLISION, SET THEM TO 0, 0 IF NOT USING THEM
 
@@ -582,6 +614,7 @@ wBody* ModulePhysics::CreateCircle(float r, p2Point<float> pos)
 
 	wbody->ctype = ColliderType::UNKNOWN;
 	wbody->btype = bodyType::DYNAMIC;
+	wbody->wclass = wBodyClass::CIRCLE;
 
 	addBodyToList(wbody);
 
@@ -751,5 +784,14 @@ void wBody::OnCollision(wBody* Body2)
 		pos.x = GetPosition().x;
 		pos.y = Body2->GetPosition().y - PIXEL_TO_METERS(GetWidth());
 		SetPosition(pos);
+	}
+
+	if (Body2->ctype == ColliderType::FLOOR)
+	{
+		applyfF = true;
+	}
+	else
+	{
+		applyfF = false;
 	}
 }
