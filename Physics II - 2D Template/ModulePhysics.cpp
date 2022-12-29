@@ -73,13 +73,30 @@ update_status ModulePhysics::PreUpdate()
 		}
 
 		// Gravity control
-		if (App->input->GetKey(SDL_SCANCODE_F7) == KEY_REPEAT)
+		if (App->input->GetKey(SDL_SCANCODE_F7) == KEY_DOWN)
 		{
-			floor->gravity.y -= 1;
+			if (App->input->GetKey(SDL_SCANCODE_LCTRL) != KEY_REPEAT) {
+				floor->gravity.y -= 1;
+			}
+			
 		}
-		if (App->input->GetKey(SDL_SCANCODE_F8) == KEY_REPEAT)
+		if (App->input->GetKey(SDL_SCANCODE_F8) == KEY_DOWN)
 		{
 			floor->gravity.y += 1;
+		}
+		if (App->input->GetKey(SDL_SCANCODE_LCTRL) == KEY_REPEAT)
+		{
+			if (App->input->GetKey(SDL_SCANCODE_F7) == KEY_DOWN)
+			{
+				if (floor->gravity.y != 0.0f) {
+					floor->auxGravity = floor->gravity;
+					floor->gravity.y = 0.0f;
+				}
+				else if(floor->gravity.y == 0.0f)
+				{
+					floor->gravity = floor->auxGravity;
+				}
+			}
 		}
 		
 		// Integration Method control
