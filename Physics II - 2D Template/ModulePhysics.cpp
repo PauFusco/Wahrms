@@ -40,11 +40,86 @@ bool ModulePhysics::Start()
 update_status ModulePhysics::PreUpdate()
 {
 	
+
+	
+	//LOG("Current position: %f,%f\n", App->player->plBody->GetPosition().x, App->player->plBody->GetPosition().y);
+	//LOG("Previous position: %f,%f\n %d\n\n", App->player->plBody->GetPrevPosition().x, App->player->plBody->GetPrevPosition().y, frames);
+	
+
+	if (Bodies != nullptr)
+	{
+		// Delta Time Schemes control
+		if (App->input->GetKey(SDL_SCANCODE_F2) == KEY_DOWN)
+		{
+			dtScheme = DeltaTimeScheme::FIXED;
+		}
+		if (App->input->GetKey(SDL_SCANCODE_F3) == KEY_DOWN)
+		{
+			dtScheme = DeltaTimeScheme::SEMI_FIXED;
+		}
+		if (App->input->GetKey(SDL_SCANCODE_F4) == KEY_DOWN)
+		{
+			dtScheme = DeltaTimeScheme::VARIABLE;
+		}
+
+		// FPS for Physics Calculation control
+		if (App->input->GetKey(SDL_SCANCODE_F5) == KEY_DOWN)
+		{
+			fps = 30.0;
+			dt = 1.0 / fps;
+		}
+		if (App->input->GetKey(SDL_SCANCODE_F6) == KEY_DOWN)
+		{
+			fps = 60.0;
+			dt = 1.0 / fps;
+		}
+
+		// Gravity control
+		if (App->input->GetKey(SDL_SCANCODE_F7) == KEY_REPEAT)
+		{
+			floor->gravity.y -= 1;
+		}
+		if (App->input->GetKey(SDL_SCANCODE_F8) == KEY_REPEAT)
+		{
+			floor->gravity.y += 1;
+		}
+		
+		// Integration Method control
+		if (App->input->GetKey(SDL_SCANCODE_F9) == KEY_DOWN)
+		{
+			IntMeth = IntegrationMethod::IMPLICIT_EULER;
+		}
+		if (App->input->GetKey(SDL_SCANCODE_F10) == KEY_DOWN)
+		{
+			IntMeth = IntegrationMethod::SYMPLECTIC_EULER;
+		}
+		if (App->input->GetKey(SDL_SCANCODE_F11) == KEY_DOWN)
+		{
+			IntMeth = IntegrationMethod::VELOCITY_VERLET;
+		}
+		if (App->input->GetKey(SDL_SCANCODE_4) == KEY_DOWN)
+		{
+			Cmethod = CollisionMethod::NO_ADJUSTMENT;
+		}
+		if (App->input->GetKey(SDL_SCANCODE_5) == KEY_DOWN)
+		{
+			Cmethod = CollisionMethod::NORMAL_VEC_TELEPORT;
+		}
+		if (App->input->GetKey(SDL_SCANCODE_6) == KEY_DOWN)
+		{
+			Cmethod = CollisionMethod::SUBSTEPPING;
+		}
+		if (App->input->GetKey(SDL_SCANCODE_7) == KEY_DOWN)
+		{
+			Cmethod = CollisionMethod::RAYCAST;
+		}
+
 	// LOG("Player position x: %d", App->player->plBody->GetPosition().x);
 
 	if (Bodies != nullptr)
 	{
 		if (debug) debugKeys();
+
 		
 		integrator();
 		
@@ -343,6 +418,39 @@ void ModulePhysics::CheckCollision()
 
 						if (distance < radius)
 						{
+							if (Cmethod == CollisionMethod::SUBSTEPPING)
+							{
+								bodies->data->SetPosition(bodies->data->GetPrevPosition());
+								bodies2->data->SetPosition(bodies2->data->GetPrevPosition());
+
+								dt = dt / steps;
+								for (int i = 0; i < steps; ++i)
+								{
+									
+									integrator();
+									if (distance <= radius)
+									{
+										break;
+									}
+								}
+								dt = dt * steps;
+							}
+
+							if (Cmethod == CollisionMethod::NORMAL_VEC_TELEPORT)
+							{
+								float depth = radius - distance;
+								//LOG("depth %f\n", depth);
+								wVec2 DistanceVec;
+								DistanceVec.x = bodies2->data->GetPosition().x - bodies->data->GetPosition().x;
+								DistanceVec.y = bodies2->data->GetPosition().y - bodies->data->GetPosition().y;
+								LOG("distance y: %f\n", DistanceVec.y);
+
+								p2Point<float> fixVec;
+								fixVec.x = bodies->data->GetPosition().x - (DistanceVec.x) * depth;
+								fixVec.y = bodies->data->GetPosition().y - (DistanceVec.y) * depth;
+								bodies->data->SetPosition(fixVec);
+							}
+
 							bodies->data->OnCollision(bodies2->data);
 
 
@@ -366,6 +474,38 @@ void ModulePhysics::CheckCollision()
 
 							if (distance < radius)
 							{
+								if (Cmethod == CollisionMethod::SUBSTEPPING)
+								{
+									bodies->data->SetPosition(bodies->data->GetPrevPosition());
+
+									dt = dt / steps;
+									for (int i = 0; i < steps; ++i)
+									{
+										
+										integrator();
+										if (distance <= radius)
+										{
+											break;
+										}
+									}
+									dt = dt * steps;
+								}
+
+								if (Cmethod == CollisionMethod::NORMAL_VEC_TELEPORT)
+								{
+									float depth = radius - distance;
+									//LOG("depth %f\n", depth);
+									wVec2 DistanceVec;
+									DistanceVec.x = bodies->data->GetPosition().x;
+									DistanceVec.y = bodies2->data->GetPosition().y - bodies->data->GetPosition().y;
+									
+
+									p2Point<float> fixVec;
+									fixVec.x = bodies->data->GetPosition().x;
+									fixVec.y = bodies->data->GetPosition().y - (DistanceVec.y) * depth;
+									bodies->data->SetPosition(fixVec);
+								}
+
 								bodies->data->OnCollision(bodies2->data);
 								
 								
@@ -386,6 +526,38 @@ void ModulePhysics::CheckCollision()
 
 							if (distance < radius)
 							{
+								if (Cmethod == CollisionMethod::SUBSTEPPING)
+								{
+									bodies->data->SetPosition(bodies->data->GetPrevPosition());
+
+									dt = dt / steps;
+									for (int i = 0; i < steps; ++i)
+									{
+
+										integrator();
+										if (distance <= radius)
+										{
+											break;
+										}
+									}
+									dt = dt * steps;
+								}
+
+								if (Cmethod == CollisionMethod::NORMAL_VEC_TELEPORT)
+								{
+									float depth = radius - distance;
+									//LOG("depth %f\n", depth);
+									wVec2 DistanceVec;
+									DistanceVec.x = bodies2->data->GetPosition().x - bodies->data->GetPosition().x;
+									DistanceVec.y = bodies->data->GetPosition().y;
+									
+
+									p2Point<float> fixVec;
+									fixVec.x = bodies->data->GetPosition().x - (DistanceVec.x) * depth;
+									fixVec.y = bodies->data->GetPosition().y;
+									bodies->data->SetPosition(fixVec);
+								}
+
 								bodies->data->OnCollision(bodies2->data);
 
 
@@ -409,6 +581,39 @@ void ModulePhysics::CheckCollision()
 
 							if (distance < radius)
 							{
+								if (Cmethod == CollisionMethod::SUBSTEPPING)
+								{
+									bodies->data->SetPosition(bodies->data->GetPrevPosition());
+
+									dt = dt / steps;
+									for (int i = 0; i < steps; ++i)
+									{
+
+										integrator();
+										if (distance <= radius)
+										{
+											break;
+										}
+									}
+									dt = dt * steps;
+								}
+
+								if (Cmethod == CollisionMethod::NORMAL_VEC_TELEPORT)
+								{
+									float depth = radius - distance;
+									//LOG("depth %f\n", depth);
+									wVec2 DistanceVec;
+									DistanceVec.x = bodies->data->GetPosition().x;
+									DistanceVec.y = bodies2->data->GetPosition().y - bodies->data->GetPosition().y;
+
+									
+
+									p2Point<float> fixVec;
+									fixVec.x = bodies->data->GetPosition().x;
+									fixVec.y = bodies->data->GetPosition().y - (DistanceVec.y) * depth;
+									bodies->data->SetPosition(fixVec);
+								}
+
 								bodies->data->OnCollision(bodies2->data);
 								
 								
@@ -431,6 +636,39 @@ void ModulePhysics::CheckCollision()
 
 							if (distance < radius)
 							{
+								if (Cmethod == CollisionMethod::SUBSTEPPING)
+								{
+									bodies->data->SetPosition(bodies->data->GetPrevPosition());
+
+									dt = dt / steps;
+									for (int i = 0; i < steps; ++i)
+									{
+										LOG("INTEGRATING SUB");
+										integrator();
+										if (distance <= radius)
+										{
+											break;
+										}
+									}
+									dt = dt * steps;
+								}
+
+								if (Cmethod == CollisionMethod::NORMAL_VEC_TELEPORT)
+								{
+									float depth = radius - distance;
+									//LOG("depth %f\n", depth);
+									wVec2 DistanceVec;
+									DistanceVec.x = bodies2->data->GetPosition().x - bodies->data->GetPosition().x;
+									DistanceVec.y = bodies->data->GetPosition().y;
+
+									LOG("distance y: %f\n", depth);
+
+									p2Point<float> fixVec;
+									fixVec.x = bodies->data->GetPosition().x - (DistanceVec.x) * depth;
+									fixVec.y = bodies->data->GetPosition().y;
+									bodies->data->SetPosition(fixVec);
+								}
+
 								bodies->data->OnCollision(bodies2->data);
 								
 								
@@ -502,6 +740,7 @@ void ModulePhysics::integrator()
 
 			bodies->data->gF = wVec2(bodyMass * g.x, bodyMass * g.y);
 
+
 			
 			wVec2 actualVelocity = bodies->data->GetSpeed();
 			
@@ -512,6 +751,7 @@ void ModulePhysics::integrator()
 			{
 				bodies->data->dF.x = -actualVelocity.x * actualVelocity.x * floor->dragCoef;
 			}
+
 
 			if (actualVelocity.y < 0) {
 				bodies->data->dF.y = actualVelocity.y * actualVelocity.y * floor->dragCoef;
@@ -549,6 +789,7 @@ void ModulePhysics::integrator()
 			p2Point<float> actualPosition = bodies->data->GetPosition();
 			
 
+			bodies->data->SetPrevPosition(bodies->data->GetPosition());
 
 			float px = actualPosition.x, py = actualPosition.y,
 				  vx = actualVelocity.x, vy = actualVelocity.y;
@@ -605,6 +846,7 @@ wBody* ModulePhysics::CreateCircle(float r, p2Point<float> pos)
 
 	wbody->wclass = wBodyClass::CIRCLE;
 	wbody->SetPosition(pos);
+	wbody->SetPrevPosition(pos);
 	wbody->SetLinearVelocity(wVec2(0, 0));
 
 	wbody->SetWidth(METERS_TO_PIXELS(r * 0.5));
@@ -627,6 +869,7 @@ wBody* ModulePhysics::CreateRectangle(float width, float height, p2Point<float> 
 
 	wbody->wclass = wBodyClass::SQUARE;
 	wbody->SetPosition(position);
+	wbody->SetPrevPosition(position);
 	wbody->SetLinearVelocity(wVec2(0, 0));
 	
 	wbody->SetWidth(METERS_TO_PIXELS(width));
@@ -657,6 +900,10 @@ void wBody::SetPosition(p2Point<float> position)
 {
 	bPos = position;
 }
+void wBody::SetPrevPosition(p2Point<float> position)
+{
+	prevPos = position;
+}
 unsigned int wBody::GetMass()
 {
 	return mass;
@@ -683,6 +930,10 @@ p2Point<float> wBody::GetPosition()
 {
 	return bPos;
 }
+p2Point<float> wBody::GetPrevPosition()
+{
+	return prevPos;
+}
 int wBody::GetHeight()
 {
 	return height;
@@ -702,8 +953,7 @@ void wBody::OnCollision(wBody* Body2)
 	if (wclass == wBodyClass::CIRCLE && Body2->wclass == wBodyClass::CIRCLE)
 	{
 
-		LOG("%f", GetSpeed().x);
-		LOG("This is a collision");
+		
 
 		wVec2 velocity1;
 
@@ -716,7 +966,7 @@ void wBody::OnCollision(wBody* Body2)
 			velocity1.x = (((mass - Body2->mass) / (mass + Body2->mass)) * GetSpeed().x + ((2 * Body2->mass) / (mass + Body2->mass)) * Body2->GetSpeed().x) * GetRestitution() * Body2->GetRestitution(); // attempt 3
 
 			velocity2.x = (((2 * mass) / (mass + Body2->mass)) * GetSpeed().x + ((Body2->mass - mass) / (mass + Body2->mass)) * Body2->GetSpeed().x) * GetRestitution() * Body2->GetRestitution(); // attempt 3
-			LOG("COLLIDING NOW");
+			
 			//velocity1.x = GetSpeed().x - ((2 * Body2->mass) / (mass + Body2->mass)) * (((GetSpeed().x - Body2->GetSpeed().x) / (GetPosition().x - Body2->GetPosition().x)) / ((GetPosition().x - Body2->GetPosition().x) * (GetPosition().x - Body2->GetPosition().x))) * GetPosition().x - Body2->GetPosition().x * 0.1;
 		}
 		
@@ -727,15 +977,14 @@ void wBody::OnCollision(wBody* Body2)
 
 			velocity1.y = (((mass - Body2->mass) / (mass + Body2->mass)) * GetSpeed().y + ((2 * Body2->mass) / (mass + Body2->mass)) * Body2->GetSpeed().y) * GetRestitution() * Body2->GetRestitution(); // attempt 3
 			velocity2.y = (((2 * mass) / (mass + Body2->mass)) * GetSpeed().y + ((Body2->mass - mass) / (mass + Body2->mass)) * Body2->GetSpeed().y) * GetRestitution() * Body2->GetRestitution(); // attempt 3
-			LOG("fdolihjiurghdnsviurjiemfiljufsdpfogierjfosdekigotsjguiotrhguijvfisoerfkioperhgu7irtwguwipfkwpjoeirjfowr8eighwjfper %f", GetSpeed().x);
+			
 		}
 		
 
 		SetLinearVelocity(velocity1);
 		Body2->SetLinearVelocity(velocity2);
-		//IsCollisionListener = false;
-		LOG("X %f", GetPosition().x);
-		LOG("Y %f", GetPosition().y);
+		
+		
 
 	}
 	else if (wclass == wBodyClass::CIRCLE && Body2->wclass == wBodyClass::SQUARE)
@@ -746,7 +995,7 @@ void wBody::OnCollision(wBody* Body2)
 		velocity1.x = GetSpeed().x;
 		velocity1.y = GetSpeed().y;
 
-		LOG("COLLIDING NOW %f", (Body2->GetSpeed().x ));
+		/////////////////////////////LOG("COLLIDING NOW %f", (Body2->GetSpeed().x ));
 
 		if (GetPosition().y < Body2->GetPosition().y &&
 			GetPosition().x + PIXEL_TO_METERS(GetWidth()) > Body2->GetPosition().x &&

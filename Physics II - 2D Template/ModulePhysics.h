@@ -54,6 +54,15 @@ enum class ColliderType
 	UNKNOWN
 };
 
+enum class CollisionMethod
+{
+	NO_ADJUSTMENT,
+	NORMAL_VEC_TELEPORT,
+	SUBSTEPPING,
+	RAYCAST
+
+};
+
 
 enum class IntegrationMethod
 {
@@ -83,6 +92,7 @@ public:
 	// Setters
 	void SetLinearVelocity(wVec2 v);
 	void SetPosition(p2Point<float> position);
+	void SetPrevPosition(p2Point<float> position);
 	
 	void SetWidth(int iwidth);
 	void SetHeight(int iheight);
@@ -94,6 +104,7 @@ public:
 	unsigned int GetMass();
 
 	p2Point<float> GetPosition();
+	p2Point<float> GetPrevPosition();
 	
 	int GetWidth();
 	int GetHeight();
@@ -125,6 +136,7 @@ private:
 	unsigned int elasticCoef = 1;
 	float restitution = 1;
 	p2Point<float> bPos; // Position in meters
+	p2Point<float> prevPos;
 	wVec2 speed;
 
 };
@@ -180,12 +192,18 @@ public:
 
 	void printDebugInfo();
 
+	
+
 
 	float fps = 60.0;
 	float dt = 1 / fps;
 
-
+	int steps = 6;
+	int frames = 0;
+	
 	DeltaTimeScheme dtScheme = DeltaTimeScheme::SEMI_FIXED;
+	CollisionMethod Cmethod = CollisionMethod::NO_ADJUSTMENT;
+
 
 private:
 	p2List<wBody*>* Bodies;
