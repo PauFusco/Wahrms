@@ -229,7 +229,7 @@ private:
 	const char* frametimeChar;
 
 
-	char* colCharna = "NORMAL ADJUSTMENT <";
-	char* colCharvt = "NORMAL_VEC TELEPORT <";
+	char* colCharna = "NO ADJUSTMENT <";
+	char* colCharvt = "NORMAL_VECTOR TELEPORT <";
 	char* colChars = "SUBSTEPPING <";
 };
