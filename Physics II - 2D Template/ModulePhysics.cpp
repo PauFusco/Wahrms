@@ -44,74 +44,8 @@ update_status ModulePhysics::PreUpdate()
 
 	if (Bodies != nullptr)
 	{
-		// Delta Time Schemes control
-		if (App->input->GetKey(SDL_SCANCODE_F2) == KEY_DOWN)
-		{
-			dtScheme = DeltaTimeScheme::FIXED;
-			dt = 1 / fps;
-		}
-		if (App->input->GetKey(SDL_SCANCODE_F3) == KEY_DOWN)
-		{
-			dtScheme = DeltaTimeScheme::SEMI_FIXED;
-			dt = 1 / fps;
-		}
-		if (App->input->GetKey(SDL_SCANCODE_F4) == KEY_DOWN)
-		{
-			dtScheme = DeltaTimeScheme::VARIABLE;
-		}
-
-		// FPS for Physics Calculation control
-		if (App->input->GetKey(SDL_SCANCODE_F5) == KEY_DOWN)
-		{
-			fps = 30.0;
-			dt = 1.0 / fps;
-		}
-		if (App->input->GetKey(SDL_SCANCODE_F6) == KEY_DOWN)
-		{
-			fps = 60.0;
-			dt = 1.0 / fps;
-		}
-
-		// Gravity control
-		if (App->input->GetKey(SDL_SCANCODE_F7) == KEY_DOWN)
-		{
-			if (App->input->GetKey(SDL_SCANCODE_LCTRL) != KEY_REPEAT) {
-				floor->gravity.y -= 1;
-			}
-			
-		}
-		if (App->input->GetKey(SDL_SCANCODE_F8) == KEY_DOWN)
-		{
-			floor->gravity.y += 1;
-		}
-		if (App->input->GetKey(SDL_SCANCODE_LCTRL) == KEY_REPEAT)
-		{
-			if (App->input->GetKey(SDL_SCANCODE_F7) == KEY_DOWN)
-			{
-				if (floor->gravity.y != 0.0f) {
-					floor->auxGravity = floor->gravity;
-					floor->gravity.y = 0.0f;
-				}
-				else if(floor->gravity.y == 0.0f)
-				{
-					floor->gravity = floor->auxGravity;
-				}
-			}
-		}
 		
-		// Integration Method control
-		if (App->input->GetKey(SDL_SCANCODE_F9) == KEY_DOWN)
-		{
-			IntMeth = IntegrationMethod::IMPLICIT_EULER;
-		}
-		if (App->input->GetKey(SDL_SCANCODE_F10) == KEY_DOWN)
-		{
-			IntMeth = IntegrationMethod::SYMPLECTIC_EULER;
-		}
-		if (App->input->GetKey(SDL_SCANCODE_F11) == KEY_DOWN)
-		{
-			IntMeth = IntegrationMethod::VELOCITY_VERLET;
-		}
+		debugKeys();
 		
 		integrator();
 		
@@ -210,12 +144,107 @@ void ModulePhysics::printDebugInfo()
 		break;
 	}
 
-	// Gravity acceleration debug
+
+	// Gravity Acceleration debug
 	temp = to_string(floor->gravity.y);
 	gravChar = temp.c_str();
 	
 	App->fonts->BlitText(0, 75, 0, "ACTUAL GRAVITY;");
-	App->fonts->BlitText(130, 75, 0, gravChar);
+	App->fonts->BlitText(150, 75, 0, gravChar);
+
+
+	// Drag Coefficient debug
+	temp = to_string(floor->dragCoef);
+	dragChar = temp.c_str();
+
+	App->fonts->BlitText(0, 90, 0, "DRAG COEFFICIENT;");
+	App->fonts->BlitText(150, 90, 0, dragChar);
+}
+
+void ModulePhysics::debugKeys()
+{
+	// Delta Time Schemes control
+	if (App->input->GetKey(SDL_SCANCODE_F2) == KEY_DOWN)
+	{
+		dtScheme = DeltaTimeScheme::FIXED;
+		dt = 1 / fps;
+	}
+	if (App->input->GetKey(SDL_SCANCODE_F3) == KEY_DOWN)
+	{
+		dtScheme = DeltaTimeScheme::SEMI_FIXED;
+		dt = 1 / fps;
+	}
+	if (App->input->GetKey(SDL_SCANCODE_F4) == KEY_DOWN)
+	{
+		dtScheme = DeltaTimeScheme::VARIABLE;
+	}
+
+	// FPS number control
+	if (App->input->GetKey(SDL_SCANCODE_F5) == KEY_DOWN)
+	{
+		fps = 30.0;
+		dt = 1.0 / fps;
+	}
+	if (App->input->GetKey(SDL_SCANCODE_F6) == KEY_DOWN)
+	{
+		fps = 60.0;
+		dt = 1.0 / fps;
+	}
+
+	// Gravity control
+	if (App->input->GetKey(SDL_SCANCODE_F7) == KEY_DOWN)
+	{
+		if (App->input->GetKey(SDL_SCANCODE_LCTRL) != KEY_REPEAT) {
+			floor->gravity.y -= 1;
+		}
+
+	}
+	if (App->input->GetKey(SDL_SCANCODE_F8) == KEY_DOWN)
+	{
+		floor->gravity.y += 1;
+	}
+	if (App->input->GetKey(SDL_SCANCODE_LCTRL) == KEY_REPEAT)
+	{
+		if (App->input->GetKey(SDL_SCANCODE_F7) == KEY_DOWN)
+		{
+			if (floor->gravity.y != 0.0f) {
+				floor->auxGravity = floor->gravity;
+				floor->gravity.y = 0.0f;
+			}
+			else if (floor->gravity.y == 0.0f)
+			{
+				floor->gravity = floor->auxGravity;
+			}
+		}
+	}
+
+	// Integration Method control
+	if (App->input->GetKey(SDL_SCANCODE_F9) == KEY_DOWN)
+	{
+		IntMeth = IntegrationMethod::IMPLICIT_EULER;
+	}
+	if (App->input->GetKey(SDL_SCANCODE_F10) == KEY_DOWN)
+	{
+		IntMeth = IntegrationMethod::SYMPLECTIC_EULER;
+	}
+	if (App->input->GetKey(SDL_SCANCODE_F11) == KEY_DOWN)
+	{
+		IntMeth = IntegrationMethod::VELOCITY_VERLET;
+	}
+
+	// Drag Coefficient control
+	if (App->input->GetKey(SDL_SCANCODE_O) == KEY_DOWN)
+	{
+		if (floor->dragCoef <= 1.0f) {
+			floor->dragCoef += 0.1f;
+		}
+	}
+	if (App->input->GetKey(SDL_SCANCODE_I) == KEY_DOWN)
+	{
+		if (floor->dragCoef >= 1.0f) {
+			floor->dragCoef -= 0.1f;
+		}
+	}
 }
 
 // Called before quitting
@@ -451,6 +480,25 @@ void ModulePhysics::integrator()
 
 			bodies->data->gF = wVec2(bodyMass * g.x, bodyMass * g.y);
 
+			
+			wVec2 actualVelocity = bodies->data->GetSpeed();
+			
+			if (actualVelocity.x < 0) {
+				bodies->data->dF.x = actualVelocity.x * actualVelocity.x * floor->dragCoef;
+			}
+			else
+			{
+				bodies->data->dF.x = -actualVelocity.x * actualVelocity.x * floor->dragCoef;
+			}
+
+			if (actualVelocity.y < 0) {
+				bodies->data->dF.y = actualVelocity.y * actualVelocity.y * floor->dragCoef;
+			}
+			else
+			{
+				bodies->data->dF.y = -actualVelocity.y * actualVelocity.y * floor->dragCoef;
+			}
+
 
 			// CHANGE OTHER FORCES WITH ONCOLLISION, SET THEM TO 0, 0 IF NOT USING THEM
 
@@ -465,7 +513,7 @@ void ModulePhysics::integrator()
 
 
 			p2Point<float> actualPosition = bodies->data->GetPosition();
-			wVec2 actualVelocity = bodies->data->GetSpeed();
+			
 
 
 			float px = actualPosition.x, py = actualPosition.y,
