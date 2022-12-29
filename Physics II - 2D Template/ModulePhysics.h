@@ -142,6 +142,7 @@ public:
 	wVec2 gravity = wVec2(GRAVITY_X, GRAVITY_Y);
 	wVec2 auxGravity;
 	float frictionCoef;
+	float dragCoef = 0.5f;
 
 };
 
@@ -171,6 +172,8 @@ public:
 
 	void integrator();
 
+	void debugKeys();
+
 	void printDebugInfo();
 
 
@@ -182,9 +185,6 @@ public:
 private:
 	p2List<wBody*>* Bodies;
 	bool debug = true;
-
-
-
 
 	Floor* floor;
 
@@ -198,10 +198,12 @@ private:
 	const char* gravChar;
 
 
+	const char* dragChar;
+
+
 	char* schemeCharf = "FIXED DELTA TIME <";
 	char* schemeCharv = "VARIABLE DELTA TIME <";
 	char* schemeCharsf = "SEMI_FIXED DELTA TIME <";
-
 
 	const char* frametimeChar;
 };
