@@ -83,7 +83,7 @@ update_status ModulePhysics::PreUpdate()
 		{
 			floor->gravity.y += 1;
 		}
-		
+
 		// Integration Method control
 		if (App->input->GetKey(SDL_SCANCODE_F9) == KEY_DOWN)
 		{
@@ -113,7 +113,7 @@ update_status ModulePhysics::PreUpdate()
 		{
 			Cmethod = CollisionMethod::RAYCAST;
 		}
-
+	}
 	// LOG("Player position x: %d", App->player->plBody->GetPosition().x);
 
 	if (Bodies != nullptr)
