@@ -168,7 +168,8 @@ public:
 
 	void destroyBody(wBody* body);
 
-	void CreateFloor(); // Create rectangle on the bottom on the screen and put it in the list (use class??)
+	void CreateFloor(); // Create rectangle on the bottom on
+						// the screen and put it in the list (use class??)
 
 	void integrator();
 
