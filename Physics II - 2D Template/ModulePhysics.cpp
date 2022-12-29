@@ -31,7 +31,7 @@ bool ModulePhysics::Start()
 
 	CreateFloor();
 
-	floor->dragCoef = 0.5, floor->frictionCoef = 0.2;
+	floor->dragCoef = 0.01, floor->frictionCoef = 10.99;
 
 	return true;
 }
@@ -719,6 +719,7 @@ void ModulePhysics::integrator()
 				{
 					bodies->data->fF.x = bodies->data->gF.y * -floor->frictionCoef;
 				}
+				bodies->data->applyfF = false;
 			}
 
 
@@ -781,6 +782,8 @@ void ModulePhysics::integrator()
 
 			bodies->data->SetPosition(actualPosition);
 			bodies->data->SetLinearVelocity(actualVelocity);
+
+			bodies->data->fF.x = 0;
 		}	
 	}
 }
