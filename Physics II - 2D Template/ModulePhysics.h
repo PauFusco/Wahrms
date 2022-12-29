@@ -140,6 +140,7 @@ public:
 	wBody* floorBody;
 	
 	wVec2 gravity = wVec2(GRAVITY_X, GRAVITY_Y);
+	wVec2 auxGravity;
 	float frictionCoef;
 
 };
