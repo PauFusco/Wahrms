@@ -145,6 +145,7 @@ void ModulePhysics::printDebugInfo()
 	gravChar = temp.c_str();
 	
 	App->fonts->BlitText(0, 75, 0, "ACTUAL GRAVITY;");
+
 	App->fonts->BlitText(130, 75, 0, gravChar);
 
 
@@ -162,6 +163,7 @@ void ModulePhysics::printDebugInfo()
 
 	App->fonts->BlitText(0, 135, 0, "FRICTION COEFFICIENT;");
 	App->fonts->BlitText(180, 135, 0, fricChar);
+
 }
 
 void ModulePhysics::debugKeys()
