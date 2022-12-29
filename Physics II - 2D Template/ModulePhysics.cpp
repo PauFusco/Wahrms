@@ -48,10 +48,12 @@ update_status ModulePhysics::PreUpdate()
 		if (App->input->GetKey(SDL_SCANCODE_F2) == KEY_DOWN)
 		{
 			dtScheme = DeltaTimeScheme::FIXED;
+			dt = 1 / fps;
 		}
 		if (App->input->GetKey(SDL_SCANCODE_F3) == KEY_DOWN)
 		{
 			dtScheme = DeltaTimeScheme::SEMI_FIXED;
+			dt = 1 / fps;
 		}
 		if (App->input->GetKey(SDL_SCANCODE_F4) == KEY_DOWN)
 		{
