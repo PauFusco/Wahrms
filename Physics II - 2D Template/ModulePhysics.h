@@ -6,12 +6,7 @@
 
 // Define Physics Globals here
 #define GRAVITY_X 0.0f
-
-
 #define GRAVITY_Y 10.0f
-
-
-
 
 // Meters to pixels and reverse (transformation and coeficient)
 #define PIXELS_PER_METER 50.0f // if touched change METER_PER_PIXEL too
@@ -202,10 +197,10 @@ private:
 	const char* gravChar;
 
 
-	
 	char* schemeCharf = "FIXED DELTA TIME <";
 	char* schemeCharv = "VARIABLE DELTA TIME <";
 	char* schemeCharsf = "SEMI-FIXED DELTA TIME <";
+
 
 	const char* frametimeChar;
 };

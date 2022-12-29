@@ -45,6 +45,11 @@ public:
 	update_status Update();
 	bool CleanUp();
 
+	steady_clock::time_point start_time;
+	steady_clock::time_point end_time;
+	long long frame_time;
+	long long frame_time_TRUE;
+
 private:
 
 	void AddModule(Module* mod);
