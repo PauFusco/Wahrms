@@ -6,7 +6,7 @@
 
 // Define Physics Globals here
 #define GRAVITY_X 0.0f
-#define GRAVITY_Y 10.0f
+#define GRAVITY_Y 20.0f
 
 // Meters to pixels and reverse (transformation and coeficient)
 #define PIXELS_PER_METER 50.0f // if touched change METER_PER_PIXEL too
@@ -176,7 +176,7 @@ public:
 	float fps = 60.0;
 	float dt = 1 / fps;
 	
-	DeltaTimeScheme dtScheme = DeltaTimeScheme::FIXED;
+	DeltaTimeScheme dtScheme = DeltaTimeScheme::SEMI_FIXED;
 
 private:
 	p2List<wBody*>* Bodies;
