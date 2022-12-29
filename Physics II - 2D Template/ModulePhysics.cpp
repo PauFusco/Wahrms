@@ -408,9 +408,6 @@ void ModulePhysics::integrator()
       
 			wVec2 g = wVec2(floor->gravity.x, floor->gravity.y);
 
-
-			wVec2 g = wVec2(floor->gravity.x, floor->gravity.y);
-
 			bodies->data->gF = wVec2(bodyMass * g.x, bodyMass * g.y);
 
 
