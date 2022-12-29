@@ -54,16 +54,6 @@ enum class ColliderType
 	UNKNOWN
 };
 
-enum class CollisionMethod
-{
-	NO_ADJUSTMENT,
-	NORMAL_VEC_TELEPORT,
-	SUBSTEPPING,
-	RAYCAST
-
-};
-
-
 enum class IntegrationMethod
 {
 	IMPLICIT_EULER,
@@ -80,6 +70,13 @@ enum class DeltaTimeScheme
 	UNKNOWN
 };
 
+enum class CollisionMethod
+{
+	NO_ADJUSTMENT,
+	NORMAL_VEC_TELEPORT,
+	SUBSTEPPING,
+	UNKNOWN
+};
 
 // Collider of a wBody is itself
 class wBody
@@ -192,8 +189,6 @@ public:
 
 	void printDebugInfo();
 
-	
-
 
 	float fps = 60.0;
 	float dt = 1 / fps;
@@ -232,4 +227,9 @@ private:
 	char* schemeCharsf = "SEMI_FIXED DELTA TIME <";
 
 	const char* frametimeChar;
+
+
+	char* colCharna = "NORMAL ADJUSTMENT <";
+	char* colCharvt = "NORMAL_VEC TELEPORT <";
+	char* colChars = "SUBSTEPPING <";
 };

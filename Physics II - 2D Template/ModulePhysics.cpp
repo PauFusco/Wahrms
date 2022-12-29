@@ -36,101 +36,20 @@ bool ModulePhysics::Start()
 	return true;
 }
 
-// 
 update_status ModulePhysics::PreUpdate()
 {
-	
-
-	
-	//LOG("Current position: %f,%f\n", App->player->plBody->GetPosition().x, App->player->plBody->GetPosition().y);
-	//LOG("Previous position: %f,%f\n %d\n\n", App->player->plBody->GetPrevPosition().x, App->player->plBody->GetPrevPosition().y, frames);
-	
-
-	if (Bodies != nullptr)
-	{
-		// Delta Time Schemes control
-		if (App->input->GetKey(SDL_SCANCODE_F2) == KEY_DOWN)
-		{
-			dtScheme = DeltaTimeScheme::FIXED;
-		}
-		if (App->input->GetKey(SDL_SCANCODE_F3) == KEY_DOWN)
-		{
-			dtScheme = DeltaTimeScheme::SEMI_FIXED;
-		}
-		if (App->input->GetKey(SDL_SCANCODE_F4) == KEY_DOWN)
-		{
-			dtScheme = DeltaTimeScheme::VARIABLE;
-		}
-
-		// FPS for Physics Calculation control
-		if (App->input->GetKey(SDL_SCANCODE_F5) == KEY_DOWN)
-		{
-			fps = 30.0;
-			dt = 1.0 / fps;
-		}
-		if (App->input->GetKey(SDL_SCANCODE_F6) == KEY_DOWN)
-		{
-			fps = 60.0;
-			dt = 1.0 / fps;
-		}
-
-		// Gravity control
-		if (App->input->GetKey(SDL_SCANCODE_F7) == KEY_REPEAT)
-		{
-			floor->gravity.y -= 1;
-		}
-		if (App->input->GetKey(SDL_SCANCODE_F8) == KEY_REPEAT)
-		{
-			floor->gravity.y += 1;
-		}
-		
-		// Integration Method control
-		if (App->input->GetKey(SDL_SCANCODE_F9) == KEY_DOWN)
-		{
-			IntMeth = IntegrationMethod::IMPLICIT_EULER;
-		}
-		if (App->input->GetKey(SDL_SCANCODE_F10) == KEY_DOWN)
-		{
-			IntMeth = IntegrationMethod::SYMPLECTIC_EULER;
-		}
-		if (App->input->GetKey(SDL_SCANCODE_F11) == KEY_DOWN)
-		{
-			IntMeth = IntegrationMethod::VELOCITY_VERLET;
-		}
-		if (App->input->GetKey(SDL_SCANCODE_4) == KEY_DOWN)
-		{
-			Cmethod = CollisionMethod::NO_ADJUSTMENT;
-		}
-		if (App->input->GetKey(SDL_SCANCODE_5) == KEY_DOWN)
-		{
-			Cmethod = CollisionMethod::NORMAL_VEC_TELEPORT;
-		}
-		if (App->input->GetKey(SDL_SCANCODE_6) == KEY_DOWN)
-		{
-			Cmethod = CollisionMethod::SUBSTEPPING;
-		}
-		if (App->input->GetKey(SDL_SCANCODE_7) == KEY_DOWN)
-		{
-			Cmethod = CollisionMethod::RAYCAST;
-		}
-
-	// LOG("Player position x: %d", App->player->plBody->GetPosition().x);
-
 	if (Bodies != nullptr)
 	{
 		if (debug) debugKeys();
 
-		
 		integrator();
 		
 		CheckCollision();
-
 	}
 
 	return UPDATE_CONTINUE;
 }
 
-// 
 update_status ModulePhysics::PostUpdate()
 {
 	if(App->input->GetKey(SDL_SCANCODE_F1) == KEY_DOWN)
@@ -176,18 +95,34 @@ update_status ModulePhysics::PostUpdate()
 
 void ModulePhysics::printDebugInfo()
 {
+	// Collison Calculation Method debug
+	App->fonts->BlitText(0, 0, 0, "COLLISION CALCULATION CONTROL;");
+	switch (Cmethod)
+	{
+	case(CollisionMethod::NO_ADJUSTMENT):
+		App->fonts->BlitText(260, 0, 0, colCharna);
+		break;
+	case(CollisionMethod::NORMAL_VEC_TELEPORT):
+		App->fonts->BlitText(260, 0, 0, colCharvt);
+		break;
+	case(CollisionMethod::SUBSTEPPING):
+		App->fonts->BlitText(260, 0, 0, colChars);
+		break;
+	}
+
+
 	// Delta Time Scheme debug
-	App->fonts->BlitText(0, 0, 0, "DELTA TIME SCHEMES;");
+	App->fonts->BlitText(0, 30, 0, "DELTA TIME SCHEMES;");
 	switch (dtScheme)
 	{
 	case(DeltaTimeScheme::FIXED):
-		App->fonts->BlitText(160, 0, 0, schemeCharf);
+		App->fonts->BlitText(160, 30, 0, schemeCharf);
 		break;
 	case(DeltaTimeScheme::SEMI_FIXED):
-		App->fonts->BlitText(160, 0, 0, schemeCharsf);
+		App->fonts->BlitText(160, 30, 0, schemeCharsf);
 		break;
 	case(DeltaTimeScheme::VARIABLE):
-		App->fonts->BlitText(160, 0, 0, schemeCharv);
+		App->fonts->BlitText(160, 30, 0, schemeCharv);
 		break;
 	}
 
@@ -195,22 +130,22 @@ void ModulePhysics::printDebugInfo()
 	string temp = to_string(1.0 / App->frame_time_TRUE * 1000);
 	frametimeChar = temp.c_str();
 
-	App->fonts->BlitText(0, 15, 0, "ACTUAL FPS;");
-	App->fonts->BlitText(130, 15, 0, frametimeChar);
+	App->fonts->BlitText(0, 45, 0, "ACTUAL FPS;");
+	App->fonts->BlitText(130, 45, 0, frametimeChar);
 
 
 	// Integration Method debug
-	App->fonts->BlitText(0, 45, 0, "INTEGRATION METHOD;");
+	App->fonts->BlitText(0, 75, 0, "INTEGRATION METHOD;");
 	switch (IntMeth)
 	{
 	case(IntegrationMethod::IMPLICIT_EULER):
-		App->fonts->BlitText(160, 45, 0, methCharie);
+		App->fonts->BlitText(160, 75, 0, methCharie);
 		break;
 	case(IntegrationMethod::SYMPLECTIC_EULER):
-		App->fonts->BlitText(160, 45, 0, methCharse);
+		App->fonts->BlitText(160, 75, 0, methCharse);
 		break;
 	case(IntegrationMethod::VELOCITY_VERLET):
-		App->fonts->BlitText(160, 45, 0, methCharvv);
+		App->fonts->BlitText(160, 75, 0, methCharvv);
 		break;
 	}
 
@@ -219,26 +154,24 @@ void ModulePhysics::printDebugInfo()
 	temp = to_string(floor->gravity.y);
 	gravChar = temp.c_str();
 	
-	App->fonts->BlitText(0, 75, 0, "ACTUAL GRAVITY;");
-
-	App->fonts->BlitText(130, 75, 0, gravChar);
+	App->fonts->BlitText(0, 105, 0, "ACTUAL GRAVITY;");
+	App->fonts->BlitText(130, 105, 0, gravChar);
 
 
 	// Drag Coefficient debug
 	temp = to_string(floor->dragCoef);
 	dragChar = temp.c_str();
 
-	App->fonts->BlitText(0, 105, 0, "DRAG COEFFICIENT;");
-	App->fonts->BlitText(150, 105, 0, dragChar);
+	App->fonts->BlitText(0, 135, 0, "DRAG COEFFICIENT;");
+	App->fonts->BlitText(150, 135, 0, dragChar);
 
 
 	// Friction Coefficient debug
 	temp = to_string(floor->frictionCoef);
 	fricChar = temp.c_str();
 
-	App->fonts->BlitText(0, 135, 0, "FRICTION COEFFICIENT;");
-	App->fonts->BlitText(180, 135, 0, fricChar);
-
+	App->fonts->BlitText(0, 165, 0, "FRICTION COEFFICIENT;");
+	App->fonts->BlitText(180, 165, 0, fricChar);
 }
 
 void ModulePhysics::debugKeys()
@@ -341,6 +274,21 @@ void ModulePhysics::debugKeys()
 		{
 			floor->frictionCoef -= 0.1f;
 		}
+	}
+
+
+	// Collision Method control
+	if (App->input->GetKey(SDL_SCANCODE_4) == KEY_DOWN)
+	{
+		Cmethod = CollisionMethod::NO_ADJUSTMENT;
+	}
+	if (App->input->GetKey(SDL_SCANCODE_5) == KEY_DOWN)
+	{
+		Cmethod = CollisionMethod::NORMAL_VEC_TELEPORT;
+	}
+	if (App->input->GetKey(SDL_SCANCODE_6) == KEY_DOWN)
+	{
+		Cmethod = CollisionMethod::SUBSTEPPING;
 	}
 }
 
