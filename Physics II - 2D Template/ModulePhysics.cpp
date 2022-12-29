@@ -11,7 +11,7 @@ using namespace std;
 
 ModulePhysics::ModulePhysics(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
-	debug = true;
+
 }
 
 // Destructor
@@ -44,8 +44,7 @@ update_status ModulePhysics::PreUpdate()
 
 	if (Bodies != nullptr)
 	{
-		
-		debugKeys();
+		if (debug) debugKeys();
 		
 		integrator();
 		
@@ -61,9 +60,6 @@ update_status ModulePhysics::PostUpdate()
 {
 	if(App->input->GetKey(SDL_SCANCODE_F1) == KEY_DOWN)
 		debug = !debug;
-
-	if(!debug)
-		return UPDATE_CONTINUE;
 	
 	if (Bodies != nullptr)
 	{
@@ -98,8 +94,7 @@ update_status ModulePhysics::PostUpdate()
 			}
 		}
 	}
-	
-	printDebugInfo();
+	if (debug) printDebugInfo();
 	
 	return UPDATE_CONTINUE;
 }
@@ -617,6 +612,7 @@ wBody* ModulePhysics::CreateCircle(float r, p2Point<float> pos)
 
 	wbody->ctype = ColliderType::UNKNOWN;
 	wbody->btype = bodyType::DYNAMIC;
+	wbody->wclass = wBodyClass::CIRCLE;
 
 	addBodyToList(wbody);
 
