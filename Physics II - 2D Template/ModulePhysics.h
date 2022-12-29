@@ -6,12 +6,7 @@
 
 // Define Physics Globals here
 #define GRAVITY_X 0.0f
-
-
-#define GRAVITY_Y 10.0f
-
-
-
+#define GRAVITY_Y 20.0f
 
 // Meters to pixels and reverse (transformation and coeficient)
 #define PIXELS_PER_METER 50.0f // if touched change METER_PER_PIXEL too
@@ -133,6 +128,8 @@ public:
 
 	bool IsCollisionListener = false;
 
+	bool applyfF = false;
+
 private:
 	int width, height;
 	float mass = 1;
@@ -157,8 +154,11 @@ public:
 	wBody* floorBody;
 	
 	wVec2 gravity = wVec2(GRAVITY_X, GRAVITY_Y);
+	wVec2 auxGravity;
+	
+	float dragCoef;
+	
 	float frictionCoef;
-
 };
 
 class ModulePhysics : public Module
@@ -183,9 +183,12 @@ public:
 
 	void destroyBody(wBody* body);
 
-	void CreateFloor(); // Create rectangle on the bottom on the screen and put it in the list (use class??)
+	void CreateFloor(); // Create rectangle on the bottom on
+						// the screen and put it in the list (use class??)
 
 	void integrator();
+
+	void debugKeys();
 
 	void printDebugInfo();
 
@@ -194,18 +197,17 @@ public:
 
 	float fps = 60.0;
 	float dt = 1 / fps;
+
 	int steps = 6;
 	int frames = 0;
 	
-	DeltaTimeScheme dtScheme = DeltaTimeScheme::FIXED;
+	DeltaTimeScheme dtScheme = DeltaTimeScheme::SEMI_FIXED;
 	CollisionMethod Cmethod = CollisionMethod::NO_ADJUSTMENT;
+
 
 private:
 	p2List<wBody*>* Bodies;
 	bool debug = true;
-
-
-
 
 	Floor* floor;
 
@@ -219,10 +221,15 @@ private:
 	const char* gravChar;
 
 
+	const char* dragChar;
+
 	
+	const char* fricChar;
+
+
 	char* schemeCharf = "FIXED DELTA TIME <";
 	char* schemeCharv = "VARIABLE DELTA TIME <";
-	char* schemeCharsf = "SEMI-FIXED DELTA TIME <";
+	char* schemeCharsf = "SEMI_FIXED DELTA TIME <";
 
 	const char* frametimeChar;
 };

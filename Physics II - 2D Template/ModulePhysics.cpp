@@ -9,11 +9,9 @@
 
 using namespace std;
 
-
-
 ModulePhysics::ModulePhysics(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
-	debug = true;
+
 }
 
 // Destructor
@@ -33,6 +31,8 @@ bool ModulePhysics::Start()
 
 	CreateFloor();
 
+	floor->dragCoef = 0.5, floor->frictionCoef = 0.2;
+
 	return true;
 }
 
@@ -40,6 +40,7 @@ bool ModulePhysics::Start()
 update_status ModulePhysics::PreUpdate()
 {
 	
+
 	
 	//LOG("Current position: %f,%f\n", App->player->plBody->GetPosition().x, App->player->plBody->GetPosition().y);
 	//LOG("Previous position: %f,%f\n %d\n\n", App->player->plBody->GetPrevPosition().x, App->player->plBody->GetPrevPosition().y, frames);
@@ -112,6 +113,13 @@ update_status ModulePhysics::PreUpdate()
 		{
 			Cmethod = CollisionMethod::RAYCAST;
 		}
+
+	// LOG("Player position x: %d", App->player->plBody->GetPosition().x);
+
+	if (Bodies != nullptr)
+	{
+		if (debug) debugKeys();
+
 		
 		integrator();
 		
@@ -127,9 +135,6 @@ update_status ModulePhysics::PostUpdate()
 {
 	if(App->input->GetKey(SDL_SCANCODE_F1) == KEY_DOWN)
 		debug = !debug;
-
-	if(!debug)
-		return UPDATE_CONTINUE;
 	
 	if (Bodies != nullptr)
 	{
@@ -164,36 +169,179 @@ update_status ModulePhysics::PostUpdate()
 			}
 		}
 	}
-	
-	printDebugInfo();
+	if (debug) printDebugInfo();
 	
 	return UPDATE_CONTINUE;
 }
 
 void ModulePhysics::printDebugInfo()
 {
-	// Integration Method debug
-	App->fonts->BlitText(0, 0, 0, "INTEGRATION METHOD;");
-	switch (IntMeth)
+	// Delta Time Scheme debug
+	App->fonts->BlitText(0, 0, 0, "DELTA TIME SCHEMES;");
+	switch (dtScheme)
 	{
-	case(IntegrationMethod::IMPLICIT_EULER):
-		App->fonts->BlitText(160, 0, 0, methCharie);
+	case(DeltaTimeScheme::FIXED):
+		App->fonts->BlitText(160, 0, 0, schemeCharf);
 		break;
-	case(IntegrationMethod::SYMPLECTIC_EULER):
-		App->fonts->BlitText(160, 0, 0, methCharse);
+	case(DeltaTimeScheme::SEMI_FIXED):
+		App->fonts->BlitText(160, 0, 0, schemeCharsf);
 		break;
-	case(IntegrationMethod::VELOCITY_VERLET):
-		App->fonts->BlitText(160, 0, 0, methCharvv);
+	case(DeltaTimeScheme::VARIABLE):
+		App->fonts->BlitText(160, 0, 0, schemeCharv);
 		break;
 	}
 
-	// Gravity acceleration debug
+	// FPS count debug
+	string temp = to_string(1.0 / App->frame_time_TRUE * 1000);
+	frametimeChar = temp.c_str();
 
-	string temp = to_string(floor->gravity.y);
+	App->fonts->BlitText(0, 15, 0, "ACTUAL FPS;");
+	App->fonts->BlitText(130, 15, 0, frametimeChar);
 
+
+	// Integration Method debug
+	App->fonts->BlitText(0, 45, 0, "INTEGRATION METHOD;");
+	switch (IntMeth)
+	{
+	case(IntegrationMethod::IMPLICIT_EULER):
+		App->fonts->BlitText(160, 45, 0, methCharie);
+		break;
+	case(IntegrationMethod::SYMPLECTIC_EULER):
+		App->fonts->BlitText(160, 45, 0, methCharse);
+		break;
+	case(IntegrationMethod::VELOCITY_VERLET):
+		App->fonts->BlitText(160, 45, 0, methCharvv);
+		break;
+	}
+
+
+	// Gravity Acceleration debug
+	temp = to_string(floor->gravity.y);
 	gravChar = temp.c_str();
-	App->fonts->BlitText(0, 15, 0, "ACTUAL GRAVITY;");
-	App->fonts->BlitText(130, 15, 0, gravChar);
+	
+	App->fonts->BlitText(0, 75, 0, "ACTUAL GRAVITY;");
+
+	App->fonts->BlitText(130, 75, 0, gravChar);
+
+
+	// Drag Coefficient debug
+	temp = to_string(floor->dragCoef);
+	dragChar = temp.c_str();
+
+	App->fonts->BlitText(0, 105, 0, "DRAG COEFFICIENT;");
+	App->fonts->BlitText(150, 105, 0, dragChar);
+
+
+	// Friction Coefficient debug
+	temp = to_string(floor->frictionCoef);
+	fricChar = temp.c_str();
+
+	App->fonts->BlitText(0, 135, 0, "FRICTION COEFFICIENT;");
+	App->fonts->BlitText(180, 135, 0, fricChar);
+
+}
+
+void ModulePhysics::debugKeys()
+{
+	// Delta Time Schemes control
+	if (App->input->GetKey(SDL_SCANCODE_F2) == KEY_DOWN)
+	{
+		dtScheme = DeltaTimeScheme::FIXED;
+		dt = 1 / fps;
+	}
+	if (App->input->GetKey(SDL_SCANCODE_F3) == KEY_DOWN)
+	{
+		dtScheme = DeltaTimeScheme::SEMI_FIXED;
+		dt = 1 / fps;
+	}
+	if (App->input->GetKey(SDL_SCANCODE_F4) == KEY_DOWN)
+	{
+		dtScheme = DeltaTimeScheme::VARIABLE;
+	}
+
+
+	// FPS number control
+	if (App->input->GetKey(SDL_SCANCODE_F5) == KEY_DOWN)
+	{
+		fps = 30.0;
+		dt = 1.0 / fps;
+	}
+	if (App->input->GetKey(SDL_SCANCODE_F6) == KEY_DOWN)
+	{
+		fps = 60.0;
+		dt = 1.0 / fps;
+	}
+
+
+	// Gravity control
+	if (App->input->GetKey(SDL_SCANCODE_F7) == KEY_DOWN)
+	{
+		if (App->input->GetKey(SDL_SCANCODE_LCTRL) != KEY_REPEAT) {
+			floor->gravity.y -= 1;
+		}
+
+	}
+	if (App->input->GetKey(SDL_SCANCODE_F8) == KEY_DOWN)
+	{
+		floor->gravity.y += 1;
+	}
+	if (App->input->GetKey(SDL_SCANCODE_LCTRL) == KEY_REPEAT)
+	{
+		if (App->input->GetKey(SDL_SCANCODE_F7) == KEY_DOWN)
+		{
+			if (floor->gravity.y != 0.0f) {
+				floor->auxGravity = floor->gravity;
+				floor->gravity.y = 0.0f;
+			}
+			else if (floor->gravity.y == 0.0f)
+			{
+				floor->gravity = floor->auxGravity;
+			}
+		}
+	}
+
+
+	// Integration Method control
+	if (App->input->GetKey(SDL_SCANCODE_F9) == KEY_DOWN)
+	{
+		IntMeth = IntegrationMethod::IMPLICIT_EULER;
+	}
+	if (App->input->GetKey(SDL_SCANCODE_F10) == KEY_DOWN)
+	{
+		IntMeth = IntegrationMethod::SYMPLECTIC_EULER;
+	}
+	if (App->input->GetKey(SDL_SCANCODE_F11) == KEY_DOWN)
+	{
+		IntMeth = IntegrationMethod::VELOCITY_VERLET;
+	}
+
+
+	// Drag Coefficient control
+	if (App->input->GetKey(SDL_SCANCODE_O) == KEY_DOWN)
+	{
+		floor->dragCoef += 0.1f;
+	}
+	if (App->input->GetKey(SDL_SCANCODE_I) == KEY_DOWN)
+	{
+		floor->dragCoef -= 0.1f;
+	}
+
+
+	// Friction Coefficient control
+	if (App->input->GetKey(SDL_SCANCODE_K) == KEY_DOWN)
+	{
+		if (floor->frictionCoef <= 1.0)
+		{
+			floor->frictionCoef += 0.1f;
+		}
+	}
+	if (App->input->GetKey(SDL_SCANCODE_J) == KEY_DOWN)
+	{
+		if (floor->frictionCoef > 0.1)
+		{
+			floor->frictionCoef -= 0.1f;
+		}
+	}
 }
 
 // Called before quitting
@@ -366,7 +514,7 @@ void ModulePhysics::CheckCollision()
 						}
 						else if (bodies->data->GetPosition().x > (bodies2->data->GetPosition().x + PIXEL_TO_METERS(bodies2->data->GetWidth())) &&
 							bodies->data->GetPosition().y > bodies2->data->GetPosition().y &&
-							bodies->data->GetPosition().y - PIXEL_TO_METERS(bodies->data->GetWidth()) < (bodies2->data->GetPosition().y + PIXEL_TO_METERS(bodies2->data->GetHeight())) )
+							bodies->data->GetPosition().y - PIXEL_TO_METERS(bodies->data->GetWidth()) < (bodies2->data->GetPosition().y + PIXEL_TO_METERS(bodies2->data->GetHeight())) ) 
 						{
 							p2Point<float> FloorPos;
 
@@ -590,10 +738,40 @@ void ModulePhysics::integrator()
       
 			wVec2 g = wVec2(floor->gravity.x, floor->gravity.y);
 
-
-			//wVec2 g = wVec2(floor->gravity.x, floor->gravity.y);
-
 			bodies->data->gF = wVec2(bodyMass * g.x, bodyMass * g.y);
+
+
+			
+			wVec2 actualVelocity = bodies->data->GetSpeed();
+			
+			if (actualVelocity.x < 0) {
+				bodies->data->dF.x = actualVelocity.x * actualVelocity.x * floor->dragCoef;
+			}
+			else
+			{
+				bodies->data->dF.x = -actualVelocity.x * actualVelocity.x * floor->dragCoef;
+			}
+
+
+			if (actualVelocity.y < 0) {
+				bodies->data->dF.y = actualVelocity.y * actualVelocity.y * floor->dragCoef;
+			}
+			else
+			{
+				bodies->data->dF.y = -actualVelocity.y * actualVelocity.y * floor->dragCoef;
+			}
+
+			if (bodies->data->applyfF)
+			{
+				if (bodies->data->GetSpeed().x < 0)
+				{
+					bodies->data->fF.x = bodies->data->gF.y * floor->frictionCoef;
+				}
+				if (bodies->data->GetSpeed().x > 0)
+				{
+					bodies->data->fF.x = bodies->data->gF.y * -floor->frictionCoef;
+				}
+			}
 
 
 			// CHANGE OTHER FORCES WITH ONCOLLISION, SET THEM TO 0, 0 IF NOT USING THEM
@@ -609,7 +787,7 @@ void ModulePhysics::integrator()
 
 
 			p2Point<float> actualPosition = bodies->data->GetPosition();
-			wVec2 actualVelocity = bodies->data->GetSpeed();
+			
 
 			bodies->data->SetPrevPosition(bodies->data->GetPosition());
 
@@ -678,6 +856,7 @@ wBody* ModulePhysics::CreateCircle(float r, p2Point<float> pos)
 
 	wbody->ctype = ColliderType::UNKNOWN;
 	wbody->btype = bodyType::DYNAMIC;
+	wbody->wclass = wBodyClass::CIRCLE;
 
 	addBodyToList(wbody);
 
@@ -854,5 +1033,14 @@ void wBody::OnCollision(wBody* Body2)
 		pos.x = GetPosition().x;
 		pos.y = Body2->GetPosition().y - PIXEL_TO_METERS(GetWidth());
 		SetPosition(pos);
+	}
+
+	if (Body2->ctype == ColliderType::FLOOR)
+	{
+		applyfF = true;
+	}
+	else
+	{
+		applyfF = false;
 	}
 }
