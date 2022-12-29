@@ -34,4 +34,8 @@ public:
 
 	int HP = 5;
 	bool alive = true;
+	bool isTurn;
+
+	int angle = 0;
+	int strength = 0;
 };
