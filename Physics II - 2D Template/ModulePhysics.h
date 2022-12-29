@@ -90,6 +90,7 @@ public:
 	void SetLinearVelocity(wVec2 v);
 	void SetPosition(p2Point<float> position);
 	void SetPrevPosition(p2Point<float> position);
+	void ApplyForce(wVec2 f);
 	
 	void SetWidth(int iwidth);
 	void SetHeight(int iheight);
@@ -120,7 +121,7 @@ public:
 	// Gravity, bounce, friction, drag, total
 	wVec2 gF = wVec2(0, 0), bF = wVec2(0, 0),
 		  fF = wVec2(0, 0), dF = wVec2(0, 0),
-		  tF = wVec2(0, 0);
+		  tF = wVec2(0, 0), iF = wVec2(0, 0);
 
 
 	bool IsCollisionListener = false;
