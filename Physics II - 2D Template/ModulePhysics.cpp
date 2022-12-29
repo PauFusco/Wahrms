@@ -36,101 +36,20 @@ bool ModulePhysics::Start()
 	return true;
 }
 
-// 
 update_status ModulePhysics::PreUpdate()
 {
-	
-
-	
-	//LOG("Current position: %f,%f\n", App->player->plBody->GetPosition().x, App->player->plBody->GetPosition().y);
-	//LOG("Previous position: %f,%f\n %d\n\n", App->player->plBody->GetPrevPosition().x, App->player->plBody->GetPrevPosition().y, frames);
-	
-
-	if (Bodies != nullptr)
-	{
-		// Delta Time Schemes control
-		if (App->input->GetKey(SDL_SCANCODE_F2) == KEY_DOWN)
-		{
-			dtScheme = DeltaTimeScheme::FIXED;
-		}
-		if (App->input->GetKey(SDL_SCANCODE_F3) == KEY_DOWN)
-		{
-			dtScheme = DeltaTimeScheme::SEMI_FIXED;
-		}
-		if (App->input->GetKey(SDL_SCANCODE_F4) == KEY_DOWN)
-		{
-			dtScheme = DeltaTimeScheme::VARIABLE;
-		}
-
-		// FPS for Physics Calculation control
-		if (App->input->GetKey(SDL_SCANCODE_F5) == KEY_DOWN)
-		{
-			fps = 30.0;
-			dt = 1.0 / fps;
-		}
-		if (App->input->GetKey(SDL_SCANCODE_F6) == KEY_DOWN)
-		{
-			fps = 60.0;
-			dt = 1.0 / fps;
-		}
-
-		// Gravity control
-		if (App->input->GetKey(SDL_SCANCODE_F7) == KEY_REPEAT)
-		{
-			floor->gravity.y -= 1;
-		}
-		if (App->input->GetKey(SDL_SCANCODE_F8) == KEY_REPEAT)
-		{
-			floor->gravity.y += 1;
-		}
-
-		// Integration Method control
-		if (App->input->GetKey(SDL_SCANCODE_F9) == KEY_DOWN)
-		{
-			IntMeth = IntegrationMethod::IMPLICIT_EULER;
-		}
-		if (App->input->GetKey(SDL_SCANCODE_F10) == KEY_DOWN)
-		{
-			IntMeth = IntegrationMethod::SYMPLECTIC_EULER;
-		}
-		if (App->input->GetKey(SDL_SCANCODE_F11) == KEY_DOWN)
-		{
-			IntMeth = IntegrationMethod::VELOCITY_VERLET;
-		}
-		if (App->input->GetKey(SDL_SCANCODE_4) == KEY_DOWN)
-		{
-			Cmethod = CollisionMethod::NO_ADJUSTMENT;
-		}
-		if (App->input->GetKey(SDL_SCANCODE_5) == KEY_DOWN)
-		{
-			Cmethod = CollisionMethod::NORMAL_VEC_TELEPORT;
-		}
-		if (App->input->GetKey(SDL_SCANCODE_6) == KEY_DOWN)
-		{
-			Cmethod = CollisionMethod::SUBSTEPPING;
-		}
-		if (App->input->GetKey(SDL_SCANCODE_7) == KEY_DOWN)
-		{
-			Cmethod = CollisionMethod::RAYCAST;
-		}
-	}
-	// LOG("Player position x: %d", App->player->plBody->GetPosition().x);
-
 	if (Bodies != nullptr)
 	{
 		if (debug) debugKeys();
 
-		
 		integrator();
 		
 		CheckCollision();
-
 	}
 
 	return UPDATE_CONTINUE;
 }
 
-// 
 update_status ModulePhysics::PostUpdate()
 {
 	if(App->input->GetKey(SDL_SCANCODE_F1) == KEY_DOWN)
@@ -341,6 +260,25 @@ void ModulePhysics::debugKeys()
 		{
 			floor->frictionCoef -= 0.1f;
 		}
+	}
+
+
+	// Collision Method control
+	if (App->input->GetKey(SDL_SCANCODE_4) == KEY_DOWN)
+	{
+		Cmethod = CollisionMethod::NO_ADJUSTMENT;
+	}
+	if (App->input->GetKey(SDL_SCANCODE_5) == KEY_DOWN)
+	{
+		Cmethod = CollisionMethod::NORMAL_VEC_TELEPORT;
+	}
+	if (App->input->GetKey(SDL_SCANCODE_6) == KEY_DOWN)
+	{
+		Cmethod = CollisionMethod::SUBSTEPPING;
+	}
+	if (App->input->GetKey(SDL_SCANCODE_7) == KEY_DOWN)
+	{
+		Cmethod = CollisionMethod::RAYCAST;
 	}
 }
 

@@ -192,8 +192,6 @@ public:
 
 	void printDebugInfo();
 
-	
-
 
 	float fps = 60.0;
 	float dt = 1 / fps;
