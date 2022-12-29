@@ -107,7 +107,7 @@ update_status Application::Update()
 	end_time = Clock::now();
 	frame_time = duration_cast<milliseconds>(end_time - start_time).count();
 	
-	if (physics->dtScheme == DeltaTimeScheme::VARIABLE) {
+	if (physics->dtScheme == DeltaTimeScheme::SEMI_FIXED) {
 		if (frame_time < (1 / physics->fps * 1000))
 		{
 			SDL_Delay((1 / physics->fps * 1000) - frame_time);

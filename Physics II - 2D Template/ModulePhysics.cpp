@@ -191,8 +191,8 @@ void ModulePhysics::printDebugInfo()
 	temp = to_string(floor->gravity.y);
 	gravChar = temp.c_str();
 	
-	App->fonts->BlitText(0, 60, 0, "ACTUAL GRAVITY;");
-	App->fonts->BlitText(130, 60, 0, gravChar);
+	App->fonts->BlitText(0, 75, 0, "ACTUAL GRAVITY;");
+	App->fonts->BlitText(130, 75, 0, gravChar);
 }
 
 // Called before quitting

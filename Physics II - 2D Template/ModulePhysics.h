@@ -179,7 +179,7 @@ public:
 	float fps = 60.0;
 	float dt = 1 / fps;
 	
-	DeltaTimeScheme dtScheme = DeltaTimeScheme::FIXED;
+	DeltaTimeScheme dtScheme = DeltaTimeScheme::SEMI_FIXED;
 
 private:
 	p2List<wBody*>* Bodies;
