@@ -116,6 +116,7 @@ update_status Application::Update()
 
 	end_time = Clock::now();
 	frame_time_TRUE = duration_cast<milliseconds>(end_time - start_time).count();
+
 	//LOG("%d milliseconds", frame_time);
 	return ret;
 }
