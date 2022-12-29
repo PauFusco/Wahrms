@@ -38,7 +38,7 @@ bool ModulePhysics::Start()
 update_status ModulePhysics::PreUpdate()
 {
 	
-	LOG("sfdehghuigrtfiojonejgutijeupi %f", App->player->plBody->GetPosition().x);
+	// LOG("Player position x: %d", App->player->plBody->GetPosition().x);
 
 	if (Bodies != nullptr)
 	{
@@ -237,15 +237,11 @@ void ModulePhysics::debugKeys()
 	// Drag Coefficient control
 	if (App->input->GetKey(SDL_SCANCODE_O) == KEY_DOWN)
 	{
-		if (floor->dragCoef <= 1.0f) {
-			floor->dragCoef += 0.1f;
-		}
+		floor->dragCoef += 0.1f;
 	}
 	if (App->input->GetKey(SDL_SCANCODE_I) == KEY_DOWN)
 	{
-		if (floor->dragCoef >= 1.0f) {
-			floor->dragCoef -= 0.1f;
-		}
+		floor->dragCoef -= 0.1f;
 	}
 }
 
@@ -354,7 +350,7 @@ void ModulePhysics::CheckCollision()
 						}
 						else if (bodies->data->GetPosition().x > (bodies2->data->GetPosition().x + PIXEL_TO_METERS(bodies2->data->GetWidth())) &&
 							bodies->data->GetPosition().y > bodies2->data->GetPosition().y &&
-							bodies->data->GetPosition().y - PIXEL_TO_METERS(bodies->data->GetWidth()) < (bodies2->data->GetPosition().y + PIXEL_TO_METERS(bodies2->data->GetHeight())) )
+							bodies->data->GetPosition().y - PIXEL_TO_METERS(bodies->data->GetWidth()) < (bodies2->data->GetPosition().y + PIXEL_TO_METERS(bodies2->data->GetHeight())) ) 
 						{
 							p2Point<float> FloorPos;
 
