@@ -25,6 +25,7 @@ bool ModulePlayer2::Start()
 
 	plBody->SetRestitution(0.6);
 
+	plBody->ctype = ColliderType::PLAYER2;
 
 	position.x = 8;
 	//plBody2 = App->physics->CreateCircle(3, position);
@@ -129,7 +130,7 @@ update_status ModulePlayer2::Update()
 
 			circles.add(App->physics->CreateCircle(1, pos));
 
-
+			circles.getLast()->data->ctype = ColliderType::BULLET;
 
 			circles.getLast()->data->IsCollisionListener = true;
 			circles.getLast()->data->SetRestitution(0.9);

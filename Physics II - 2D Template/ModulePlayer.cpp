@@ -25,6 +25,8 @@ bool ModulePlayer::Start()
 
 	plBody->SetRestitution(0.6);
 
+	plBody->ctype = ColliderType::PLAYER;
+
 	isTurn = true;
 
 
@@ -116,6 +118,8 @@ update_status ModulePlayer::Update()
 			}
 		}
 
+		//App->renderer->DrawLine(pos.x, pos.y, pos.x + strength)
+
 		if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
 		{
 			wVec2 vel;
@@ -129,7 +133,7 @@ update_status ModulePlayer::Update()
 
 			circles.add(App->physics->CreateCircle(1, pos));
 
-
+			circles.getLast()->data->ctype = ColliderType::BULLET;
 
 			circles.getLast()->data->IsCollisionListener = true;
 			circles.getLast()->data->SetRestitution(0.9);
