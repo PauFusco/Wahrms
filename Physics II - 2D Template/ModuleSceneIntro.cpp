@@ -27,7 +27,7 @@ bool ModuleSceneIntro::Start()
 	
 	wallBody[1] = App->physics->CreateRectangle(15, 1, pos);
 	pos.x = PIXEL_TO_METERS(SCREEN_WIDTH);
-	wallBody[0] = App->physics->CreateRectangle(1, 15, pos);
+	wallBody[2] = App->physics->CreateRectangle(1, 15, pos);
 
 	//player1 = ModulePlayer(App, true);
 	////player2 = ModulePlayer(App, true);
