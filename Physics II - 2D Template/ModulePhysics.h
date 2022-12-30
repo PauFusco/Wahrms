@@ -47,6 +47,7 @@ enum class wBodyClass
 enum class ColliderType
 {
 	PLAYER,
+	PLAYER2,
 	FLOOR,
 	BUMPER,
 	BULLET,
@@ -140,6 +141,7 @@ public:
 
 
 	bool IsCollisionListener = false;
+	bool SkipCollision = false;
 
 
 	bool applyfF = false;
@@ -211,6 +213,8 @@ public:
 
 	void printDebugInfo();
 
+	void LessPlayerHp();
+	void LessPlayer2Hp();
 
 	float fps = 60.0;
 	float dt = 1 / fps;

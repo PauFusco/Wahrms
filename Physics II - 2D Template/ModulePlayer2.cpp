@@ -1,23 +1,23 @@
 #include "Globals.h"
 #include "Application.h"
-#include "ModulePlayer.h"
+#include "ModulePlayer2.h"
 #include "ModulePhysics.h"
 #include "ModuleInput.h"
 
-ModulePlayer::ModulePlayer(Application* app, bool start_enabled) : Module(app, start_enabled)
+ModulePlayer2::ModulePlayer2(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
 }
 
-ModulePlayer::~ModulePlayer()
+ModulePlayer2::~ModulePlayer2()
 {}
 
 // Load assets
-bool ModulePlayer::Start()
+bool ModulePlayer2::Start()
 {
 	LOG("Loading player");
 
 	p2Point<float> position;
-	position.x = 5;
+	position.x = 10;
 	position.y = 1;
 
 	plBody = App->physics->CreateCircle(2, position);
@@ -25,10 +25,7 @@ bool ModulePlayer::Start()
 
 	plBody->SetRestitution(0.6);
 
-	plBody->ctype = ColliderType::PLAYER;
-
-	isTurn = true;
-
+	plBody->ctype = ColliderType::PLAYER2;
 
 	position.x = 8;
 	//plBody2 = App->physics->CreateCircle(3, position);
@@ -37,7 +34,7 @@ bool ModulePlayer::Start()
 }
 
 // Unload assets
-bool ModulePlayer::CleanUp()
+bool ModulePlayer2::CleanUp()
 {
 	LOG("Unloading player");
 
@@ -45,8 +42,10 @@ bool ModulePlayer::CleanUp()
 }
 
 // Update: draw background
-update_status ModulePlayer::Update()
+update_status ModulePlayer2::Update()
 {
+
+
 
 	if (isTurn)
 	{
@@ -118,8 +117,6 @@ update_status ModulePlayer::Update()
 			}
 		}
 
-		//App->renderer->DrawLine(pos.x, pos.y, pos.x + strength)
-
 		if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
 		{
 			wVec2 vel;
@@ -153,8 +150,6 @@ update_status ModulePlayer::Update()
 		}
 	}
 
-	
-
 	if (plBody2 == nullptr)
 	{
 		p2Point<float> position;
@@ -173,15 +168,7 @@ update_status ModulePlayer::Update()
 		}
 	}
 
-	if (App->input->GetKey(SDL_SCANCODE_1) == KEY_DOWN)
-	{
-
-		p2Point<float> position;
-		position.x = 5;
-		position.y = 1;
-
-		circles.add(App->physics->CreateCircle(3, position));
-	}
+	
 
 	if (DestroyBullet)
 	{

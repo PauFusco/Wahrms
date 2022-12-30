@@ -357,6 +357,7 @@ void ModulePhysics::CheckCollision()
 	{
 		if (bodies->data->IsCollisionListener)
 		{
+			bodies->data->SkipCollision = false;
 			aux.add(bodies->data);
 		}
 	}
@@ -377,7 +378,7 @@ void ModulePhysics::CheckCollision()
 						float radius = PIXEL_TO_METERS(bodies->data->GetWidth()) + PIXEL_TO_METERS(bodies2->data->GetWidth());
 						float distance = bodies->data->GetPosition().DistanceTo(bodies2->data->GetPosition());
 
-						if (distance < radius)
+						if (distance < radius && !bodies->data->SkipCollision)
 						{
 
 							if (Cmethod == CollisionMethod::SUBSTEPPING)
@@ -414,8 +415,22 @@ void ModulePhysics::CheckCollision()
 							}
 
 							bodies->data->OnCollision(bodies2->data);
+							bodies2->data->SkipCollision = true;
 
-
+							if (bodies->data->ctype == ColliderType::PLAYER)
+							{
+								if (bodies2->data->ctype == ColliderType::BULLET)
+								{
+									LessPlayerHp();
+								}
+							}
+							if (bodies->data->ctype == ColliderType::PLAYER2)
+							{
+								if (bodies2->data->ctype == ColliderType::BULLET)
+								{
+									LessPlayer2Hp();
+								}
+							}
 
 						}
 						
@@ -652,13 +667,7 @@ void ModulePhysics::CheckCollision()
 
 				}
 			}
-			if (bodies->data->ctype == ColliderType::PLAYER)
-			{
-				if (bodies2->data->ctype == ColliderType::BULLET)
-				{
-					App->player->HP--;
-				}
-			}
+			
 
 
 
@@ -1043,5 +1052,21 @@ void wBody::OnCollision(wBody* Body2)
 	{
 		applyfF = false;
 	}
+	
+}
 
+void ModulePhysics::LessPlayerHp()
+{
+	App->player->HP--;
+	//App->player->circles.getLast()->data->ctype = ColliderType::UNKNOWN;
+	App->player->DestroyBullet = true;
+	//Bodies->del(Bodies->getLast());
+}
+
+void ModulePhysics::LessPlayer2Hp()
+{
+	App->player2->HP--;
+	//App->player2->circles.getLast()->data->ctype = ColliderType::UNKNOWN;
+	App->player2->DestroyBullet = true;
+	//Bodies->del(Bodies->getLast());
 }
