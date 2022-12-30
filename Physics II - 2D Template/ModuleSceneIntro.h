@@ -61,4 +61,6 @@ public:
 	//ModulePlayer player2;
 
 	uint player_lose_fx;
+
+
 };

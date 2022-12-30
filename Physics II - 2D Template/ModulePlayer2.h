@@ -27,7 +27,6 @@ public:
 
 public:
 	wBody* plBody;
-	wBody* plBody2;
 	p2Point<float> pos; // Render Position (pixels)
 
 	p2List<wBody*> circles;
@@ -41,5 +40,9 @@ public:
 
 	int angle = 0;
 	int strength = 0;
+
+	const char* pltexchar = "Assets/Wahssets/Wahrmluigi.png";
+
+	SDL_Texture* pltex;
 
 };

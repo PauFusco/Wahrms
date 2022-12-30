@@ -32,12 +32,8 @@ bool ModuleSceneIntro::Start()
 	pos.y = 9;
 	wallBody[3] = App->physics->CreateRectangle(3, 0.5, pos);
 
-	//player1 = ModulePlayer(App, true);
-	////player2 = ModulePlayer(App, true);
-	//
-	//player1.isTurn = true;
-	////player2.isTurn = false;
-	//App->renderer->camera.x = App->renderer->camera.y = 0;
+
+	graphics = App->textures->Load("Assets/Wahssets/Background.png");
 
 	return ret;
 }
@@ -53,33 +49,8 @@ bool ModuleSceneIntro::CleanUp()
 // Update: draw background
 update_status ModuleSceneIntro::Update()
 {
-	
-	//if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN) {
-	//
-	//	if (player1.isTurn == true) {
-	//
-	//		player1.isTurn = false;
-	//
-	//	}
-	//
-	//	if (player1.isTurn == false) {
-	//
-	//		player1.isTurn = true;
-	//
-	//	}
-	//
-	//	if (player2.isTurn == true) {
-	//
-	//		player2.isTurn = false;
-	//
-	//	}
-	//
-	//	if (player2.isTurn == false) {
-	//
-	//		player2.isTurn = true;
-	//
-	//	}
-	//}
+	App->renderer->Blit(graphics, 0, 0);
+
 
 	return UPDATE_CONTINUE;
 }

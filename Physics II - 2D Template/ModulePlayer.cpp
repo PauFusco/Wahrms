@@ -29,6 +29,7 @@ bool ModulePlayer::Start()
 
 	isTurn = true;
 
+	pltex = App->textures->Load(pltexchar);
 
 	position.x = 8;
 	//plBody2 = App->physics->CreateCircle(3, position);
@@ -169,34 +170,6 @@ update_status ModulePlayer::Update()
 								  255, 0, 0, 122);
 	}
 
-	if (plBody2 == nullptr)
-	{
-		p2Point<float> position;
-		position.x = 5;
-		position.y = 1;
-		
-	}
-
-
-	//if (plBody2 != nullptr)
-	//{
-	//	if (App->input->GetKey(SDL_SCANCODE_E) == KEY_DOWN)
-	//	{
-	//		App->physics->destroyBody(plBody2);
-	//		
-	//	}
-	//}
-	//
-	//if (App->input->GetKey(SDL_SCANCODE_1) == KEY_DOWN)
-	//{
-	//
-	//	p2Point<float> position;
-	//	position.x = 5;
-	//	position.y = 1;
-	//
-	//	circles.add(App->physics->CreateCircle(3, position));
-	//}
-
 	if (DestroyBullet)
 	{
 		if (circles.getFirst() != NULL)
@@ -212,6 +185,14 @@ update_status ModulePlayer::Update()
 		}
 
 	}
+
+
+	p2Point<int> renderPos;
+	renderPos.x = METERS_TO_PIXELS(plBody->GetPosition().x - plBody->GetWidth());
+	renderPos.y = METERS_TO_PIXELS(plBody->GetPosition().y - plBody->GetWidth());
+
+	App->renderer->Blit(pltex, renderPos.x, renderPos.y);
+
 
 	return UPDATE_CONTINUE;
 }
