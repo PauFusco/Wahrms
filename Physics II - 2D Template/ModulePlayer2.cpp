@@ -32,6 +32,8 @@ bool ModulePlayer2::Start()
 
 	position.x = 8;
 	//plBody2 = App->physics->CreateCircle(3, position);
+
+	launch_fx = App->audio->LoadFx("Assets/Wahssets/splat.wav");
 	
 	return true;
 }
@@ -139,6 +141,8 @@ update_status ModulePlayer2::Update()
 				circles.getLast()->data->SetRestitution(0.9);
 
 				circles.getLast()->data->SetLinearVelocity(vel);
+
+				App->audio->PlayFx(launch_fx);
 
 				isTurn = false;
 			}

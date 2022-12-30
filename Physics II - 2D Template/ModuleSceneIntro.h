@@ -54,7 +54,8 @@ public:
 	uint fx_light_tiny;
 	uint fx_light_medium;
 	uint fx_light_big;
-
+	uint launch_fx;
+	
 	p2DynArray<Light> lights;
 
 	//ModulePlayer player1;

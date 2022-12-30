@@ -28,6 +28,7 @@ public:
 public:
 	wBody* plBody;
 	p2Point<float> pos; // Render Position (pixels)
+	uint launch_fx;
 
 	p2List<wBody*> circles;
 

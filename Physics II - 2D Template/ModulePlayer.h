@@ -10,6 +10,9 @@ struct Object
 {
 	SDL_Texture* graphic;
 	uint fx;
+	
+
+	
 
 	Object() : graphic(NULL)
 	{}
@@ -30,6 +33,7 @@ public:
 	p2Point<float> pos; // Render Position (pixels)
 
 	p2List<wBody*> circles;
+	uint launch_fx;
 
 	int HP = 5;
 	bool alive = true;

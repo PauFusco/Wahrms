@@ -42,6 +42,14 @@ bool ModuleSceneIntro::Start()
 
 	graphics = App->textures->Load("Assets/Wahssets/Background.png");
 
+	
+
+	App->audio->PlayMusic("Assets/Wahssets/Waluigi_Theme.ogg");
+
+	
+
+	
+
 	return ret;
 }
 
