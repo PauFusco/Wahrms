@@ -89,25 +89,25 @@ update_status ModulePlayer::Update()
 		}
 
 
-		if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_DOWN)
+		if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
 		{
 			strength++;
 		}
-		if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_DOWN)
+		if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT)
 		{
 			strength--;
 		}
-		if (App->input->GetKey(SDL_SCANCODE_UP) == KEY_DOWN)
+		if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT)
 		{
 			angle++;
 
-			if (angle >= 360) {
+			if (angle > 359) {
 
 				angle = 0;
 
 			}
 		}
-		if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_DOWN)
+		if (App->input->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)
 		{
 			angle--;
 
@@ -118,13 +118,13 @@ update_status ModulePlayer::Update()
 			}
 		}
 
-		//App->renderer->DrawLine(pos.x, pos.y, pos.x + strength)
+		LOG("angle: %d", angle);
 
 		if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
 		{
 			wVec2 vel;
-			vel.x = strength * cos(angle * DEGTORAD);
-			vel.y = strength * sin(angle * DEGTORAD);
+			vel.x = strength * cos(DEGTORAD * angle);
+			vel.y = strength * sin(DEGTORAD * angle);
 
 			p2Point<float> pos;
 			pos.x = plBody->GetPosition().x;
@@ -143,7 +143,18 @@ update_status ModulePlayer::Update()
 			isTurn = false;
 		}
 
-		
+
+		// Bullet trajectory line
+		p2Point<float> line_Start;
+		line_Start.x = METERS_TO_PIXELS(plBody->GetPosition().x);
+		line_Start.y = METERS_TO_PIXELS(plBody->GetPosition().y);
+
+		p2Point<float> line_End;
+		line_End.x = line_Start.x + strength * cos(DEGTORAD*angle);
+		line_End.y = line_Start.y + strength * sin(DEGTORAD*angle);
+
+		App->renderer->DrawLine(line_Start.x, line_Start.y, line_End.x, line_End.y, 255, 255, 255, 255);
+
 	}
 	else
 	{
