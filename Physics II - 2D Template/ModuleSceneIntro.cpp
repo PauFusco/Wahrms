@@ -1,6 +1,7 @@
 #include "Globals.h"
 #include "Application.h"
 #include "ModuleSceneIntro.h"
+#include "ModulePhysics.h"
 
 
 
@@ -17,6 +18,16 @@ bool ModuleSceneIntro::Start()
 {
 	LOG("Loading Intro assets");
 	bool ret = true;
+
+	p2Point<float> pos;
+	pos.x = -1;
+	pos.y = -1;
+
+	wallBody[0] = App->physics->CreateRectangle(1, 15, pos);
+	
+	wallBody[1] = App->physics->CreateRectangle(15, 1, pos);
+	pos.x = PIXEL_TO_METERS(SCREEN_WIDTH);
+	wallBody[2] = App->physics->CreateRectangle(1, 15, pos);
 
 	//player1 = ModulePlayer(App, true);
 	////player2 = ModulePlayer(App, true);

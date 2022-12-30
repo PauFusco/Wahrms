@@ -42,6 +42,8 @@ public:
 
 public:
 
+	wBody* wallBody[3];
+
 	SDL_Texture* graphics;
 
 	SDL_Texture* tex_light_tiny;
