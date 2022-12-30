@@ -80,22 +80,22 @@ update_status ModulePlayer::Update()
 			vel.x = 0;
 			plBody->SetLinearVelocity(vel);
 		}
-		if (App->input->GetKey(SDL_SCANCODE_V) == KEY_DOWN)
-		{
-			LOG("The x velocity is: %f", plBody->GetSpeed().x);
-			LOG("The y velocity is: %f", plBody->GetSpeed().y);
-			LOG("X %f", plBody->GetPosition().x);
-			LOG("Y %f", plBody->GetPosition().y);
-		}
+		//if (App->input->GetKey(SDL_SCANCODE_V) == KEY_DOWN)
+		//{
+		//	LOG("The x velocity is: %f", plBody->GetSpeed().x);
+		//	LOG("The y velocity is: %f", plBody->GetSpeed().y);
+		//	LOG("X %f", plBody->GetPosition().x);
+		//	LOG("Y %f", plBody->GetPosition().y);
+		//}
 
 
 		if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
 		{
-			strength++;
+			if (strength < 65)	strength++;
 		}
 		if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT)
 		{
-			strength--;
+			if (strength > -65)	strength--;
 		}
 		if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT)
 		{
@@ -117,8 +117,6 @@ update_status ModulePlayer::Update()
 
 			}
 		}
-
-		LOG("angle: %d", angle);
 
 		if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
 		{
@@ -175,24 +173,24 @@ update_status ModulePlayer::Update()
 	}
 
 
-	if (plBody2 != nullptr)
-	{
-		if (App->input->GetKey(SDL_SCANCODE_E) == KEY_DOWN)
-		{
-			App->physics->destroyBody(plBody2);
-			
-		}
-	}
-
-	if (App->input->GetKey(SDL_SCANCODE_1) == KEY_DOWN)
-	{
-
-		p2Point<float> position;
-		position.x = 5;
-		position.y = 1;
-
-		circles.add(App->physics->CreateCircle(3, position));
-	}
+	//if (plBody2 != nullptr)
+	//{
+	//	if (App->input->GetKey(SDL_SCANCODE_E) == KEY_DOWN)
+	//	{
+	//		App->physics->destroyBody(plBody2);
+	//		
+	//	}
+	//}
+	//
+	//if (App->input->GetKey(SDL_SCANCODE_1) == KEY_DOWN)
+	//{
+	//
+	//	p2Point<float> position;
+	//	position.x = 5;
+	//	position.y = 1;
+	//
+	//	circles.add(App->physics->CreateCircle(3, position));
+	//}
 
 	if (DestroyBullet)
 	{

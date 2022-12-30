@@ -79,22 +79,22 @@ update_status ModulePlayer2::Update()
 			vel.x = 0;
 			plBody->SetLinearVelocity(vel);
 		}
-		if (App->input->GetKey(SDL_SCANCODE_V) == KEY_DOWN)
-		{
-			LOG("The x velocity is: %f", plBody->GetSpeed().x);
-			LOG("The y velocity is: %f", plBody->GetSpeed().y);
-			LOG("X %f", plBody->GetPosition().x);
-			LOG("Y %f", plBody->GetPosition().y);
-		}
+		//if (App->input->GetKey(SDL_SCANCODE_V) == KEY_DOWN)
+		//{
+		//	LOG("The x velocity is: %f", plBody->GetSpeed().x);
+		//	LOG("The y velocity is: %f", plBody->GetSpeed().y);
+		//	LOG("X %f", plBody->GetPosition().x);
+		//	LOG("Y %f", plBody->GetPosition().y);
+		//}
 
 
 		if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
 		{
-			strength++;
+			if (strength < 65)	strength++;
 		}
 		if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT)
 		{
-			strength--;
+			if (strength > -65)	strength--;
 		}
 		if (App->input->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)
 		{
@@ -169,14 +169,14 @@ update_status ModulePlayer2::Update()
 	}
 
 
-	if (plBody2 != nullptr)
-	{
-		if (App->input->GetKey(SDL_SCANCODE_E) == KEY_DOWN)
-		{
-			App->physics->destroyBody(plBody2);
-			
-		}
-	}
+	//if (plBody2 != nullptr)
+	//{
+	//	if (App->input->GetKey(SDL_SCANCODE_E) == KEY_DOWN)
+	//	{
+	//		App->physics->destroyBody(plBody2);
+	//		
+	//	}
+	//}
 
 	
 
