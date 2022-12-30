@@ -236,7 +236,7 @@ private:
 	Floor* floor;
 
 
-	IntegrationMethod IntMeth = IntegrationMethod::IMPLICIT_EULER;
+	IntegrationMethod IntMeth = IntegrationMethod::SYMPLECTIC_EULER;
 	char* methCharie = "IMPLICIT EULER <";
 	char* methCharse = "SYMPLECTIC EULER <";
 	char* methCharvv = "VELOCITY VERLET <";

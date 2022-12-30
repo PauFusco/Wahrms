@@ -98,8 +98,6 @@ update_status ModulePhysics::PostUpdate()
 	}
 	if (debug) printDebugInfo();
 	
-	printDebugInfo();
-	
 	return UPDATE_CONTINUE;
 }
 
