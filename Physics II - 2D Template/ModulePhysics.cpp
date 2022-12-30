@@ -868,11 +868,11 @@ wBody* ModulePhysics::CreateRectangle(float width, float height, p2Point<float> 
 	wbody->SetWidth(METERS_TO_PIXELS(width));
 	wbody->SetHeight(METERS_TO_PIXELS(height));
 
-	wbody->SetMass(1);
+	wbody->SetMass(width * height);
 
 
 	wbody->ctype = ColliderType::UNKNOWN;
-	wbody->btype = bodyType::DYNAMIC;
+	wbody->btype = bodyType::STATIC;
 
 	addBodyToList(wbody);
 
@@ -1059,6 +1059,7 @@ void ModulePhysics::LessPlayerHp()
 	App->player->HP--;
 	//App->player->circles.getLast()->data->ctype = ColliderType::UNKNOWN;
 	App->player->DestroyBullet = true;
+	App->player2->DestroyBullet = true;
 	//Bodies->del(Bodies->getLast());
 }
 
@@ -1067,5 +1068,6 @@ void ModulePhysics::LessPlayer2Hp()
 	App->player2->HP--;
 	//App->player2->circles.getLast()->data->ctype = ColliderType::UNKNOWN;
 	App->player2->DestroyBullet = true;
+	App->player->DestroyBullet = true;
 	//Bodies->del(Bodies->getLast());
 }
