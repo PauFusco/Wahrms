@@ -18,6 +18,7 @@ Arrows
 - F2/F3/F4: Delta Time Scheme selection (Fixed / Semi-Fixed / Variable)
 - F5/F6: 30/60 target fps
 - F7/F8: -/+ gravity
+- Cntrl+F7: Toggle gravity
 - F9/F10/F11: Integration Method selection (Implicit Euler / Symplectic-Euler / Velocity-Verlet)
 - 4/5/6: Collision Calculation Method selection (No Adjustment / Normal-Vector Teleport / Substepping)
 - I/O: -/+ drag coefficient
