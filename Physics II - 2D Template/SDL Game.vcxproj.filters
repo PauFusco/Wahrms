@@ -59,11 +59,12 @@
     <ClInclude Include="ModuleFonts.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-
     <ClInclude Include="Animation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-
+    <ClInclude Include="ModulePlayer2.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -100,6 +101,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ModuleFonts.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ModulePlayer2.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

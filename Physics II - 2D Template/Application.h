@@ -10,6 +10,7 @@
 #include "ModuleInput.h"
 #include "ModuleAudio.h"
 #include "ModulePlayer.h"
+#include "ModulePlayer2.h"
 #include "ModulePhysics.h"
 #include "ModuleSceneIntro.h"
 #include "ModuleFonts.h"
@@ -28,6 +29,7 @@ public:
 	ModuleInput* input;
 	ModuleAudio* audio;
 	ModulePlayer* player;
+	ModulePlayer2* player2;
 	ModuleSceneIntro* scene_intro;
 	ModulePhysics* physics;
 	ModuleFonts* fonts;

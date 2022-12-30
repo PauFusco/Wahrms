@@ -6,20 +6,20 @@
 #include "ModulePhysics.h"
 
 
-struct Object
+struct Object2
 {
 	SDL_Texture* graphic;
 	uint fx;
 
-	Object() : graphic(NULL)
+	Object2() : graphic(NULL)
 	{}
 };
 
-class ModulePlayer : public Module
+class ModulePlayer2 : public Module
 {
 public:
-	ModulePlayer(Application* app, bool start_enabled = true);
-	virtual ~ModulePlayer();
+	ModulePlayer2(Application* app, bool start_enabled = true);
+	virtual ~ModulePlayer2();
 
 	bool Start();
 	update_status Update();
@@ -35,7 +35,7 @@ public:
 	int HP = 5;
 	bool alive = true;
 
-	bool isTurn = true;
+	bool isTurn = false;
 
 	int angle = 0;
 	int strength = 0;
