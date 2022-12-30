@@ -869,10 +869,10 @@ wBody* ModulePhysics::CreateRectangle(float width, float height, p2Point<float> 
 	wbody->SetWidth(METERS_TO_PIXELS(width));
 	wbody->SetHeight(METERS_TO_PIXELS(height));
 
-	wbody->SetMass(width * height);
+	wbody->SetMass(width * height * 10000000 );
 
-
-	wbody->ctype = ColliderType::UNKNOWN;
+	wbody->SetRestitution(1);
+	wbody->ctype = ColliderType::FLOOR;
 	wbody->btype = bodyType::STATIC;
 
 	addBodyToList(wbody);

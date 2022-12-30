@@ -43,6 +43,7 @@ public:
 public:
 
 	wBody* wallBody[4];
+	
 
 	SDL_Texture* graphics;
 
