@@ -35,6 +35,8 @@ public:
 	int HP = 5;
 	bool alive = true;
 
+	bool DestroyBullet = false;
+
 	bool isTurn = false;
 
 	int angle = 0;

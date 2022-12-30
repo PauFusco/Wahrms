@@ -170,18 +170,20 @@ update_status ModulePlayer2::Update()
 
 	
 
-	if (App->input->GetKey(SDL_SCANCODE_2) == KEY_REPEAT)
+	if (DestroyBullet)
 	{
-		if (circles.getLast() != NULL)
+		if (circles.getFirst() != NULL)
 		{
 			App->physics->destroyBody(circles.getLast()->data);
 			circles.del(circles.getLast());
+			DestroyBullet = false;
 		}
 		else
 		{
 			circles.clear();
+			DestroyBullet = false;
 		}
-		
+
 	}
 
 	return UPDATE_CONTINUE;

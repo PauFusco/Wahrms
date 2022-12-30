@@ -37,6 +37,8 @@ public:
 
 	bool isTurn = true;
 
+	bool DestroyBullet = false;
+
 	int angle = 0;
 	int strength = 0;
 

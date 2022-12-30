@@ -141,6 +141,7 @@ public:
 
 
 	bool IsCollisionListener = false;
+	bool SkipCollision = false;
 
 
 	bool applyfF = false;
