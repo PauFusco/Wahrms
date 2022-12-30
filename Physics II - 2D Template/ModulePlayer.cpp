@@ -148,7 +148,7 @@ update_status ModulePlayer::Update()
 		p2Point<float> line_Start;
 		line_Start.x = METERS_TO_PIXELS(plBody->GetPosition().x);
 		line_Start.y = METERS_TO_PIXELS(plBody->GetPosition().y);
-
+		line_Start.y -= 200;
 		p2Point<float> line_End;
 		line_End.x = line_Start.x + strength * cos(DEGTORAD*angle);
 		line_End.y = line_Start.y + strength * sin(DEGTORAD*angle);
