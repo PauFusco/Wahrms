@@ -224,7 +224,7 @@ public:
 	int frames = 0;
 	
 	DeltaTimeScheme dtScheme = DeltaTimeScheme::SEMI_FIXED;
-	CollisionMethod Cmethod = CollisionMethod::NO_ADJUSTMENT;
+	CollisionMethod Cmethod = CollisionMethod::NORMAL_VEC_TELEPORT;
 	
 
 
