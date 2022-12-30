@@ -169,6 +169,13 @@ update_status ModulePlayer2::Update()
 	}
 
 
+	if (HP <= 0) {
+		App->renderer->DrawCircle(METERS_TO_PIXELS(plBody->GetPosition().x),
+								  METERS_TO_PIXELS(plBody->GetPosition().y),
+								  plBody->GetHeight() / 2,
+								  255, 0, 0, 122);
+	}
+
 	//if (plBody2 != nullptr)
 	//{
 	//	if (App->input->GetKey(SDL_SCANCODE_E) == KEY_DOWN)
