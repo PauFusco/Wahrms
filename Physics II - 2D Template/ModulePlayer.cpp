@@ -22,7 +22,9 @@ bool ModulePlayer::Start()
 
 	plBody = App->physics->CreateCircle(2, position);
 	plBody->IsCollisionListener = true;
-	plBody->SetRestitution(0.9);
+
+	plBody->SetRestitution(0.6);
+
 
 	position.x = 8;
 	//plBody2 = App->physics->CreateCircle(3, position);
@@ -43,31 +45,34 @@ update_status ModulePlayer::Update()
 {
 
 
+
 	if (App->input->GetKey(SDL_SCANCODE_D) == KEY_DOWN)
 	{
 		wVec2 vel;
 		vel.y = 0;
-		vel.x = 0.5;
+		vel.x = 5;
 		plBody->SetLinearVelocity(vel);
 	}
 	if (App->input->GetKey(SDL_SCANCODE_A) == KEY_DOWN)
 	{
 		wVec2 vel;
 		vel.y = 0;
-		vel.x = -0.5;
+		vel.x = -5;
 		plBody->SetLinearVelocity(vel);
 	}
 	if (App->input->GetKey(SDL_SCANCODE_W) == KEY_DOWN)
 	{
 		wVec2 vel;
-		vel.y = -0.5;
+		vel.y = -100;
 		vel.x = 0;
-		plBody->SetLinearVelocity(vel);
+		//plBody->SetLinearVelocity(vel);
+		plBody->ApplyForce(vel);
 	}
 	if (App->input->GetKey(SDL_SCANCODE_S) == KEY_DOWN)
 	{
 		wVec2 vel;
-		vel.y = 0.5;
+		vel.y = 5;
+
 		vel.x = 0;
 		plBody->SetLinearVelocity(vel);
 	}
@@ -78,6 +83,7 @@ update_status ModulePlayer::Update()
 		LOG("X %f", plBody->GetPosition().x);
 		LOG("Y %f", plBody->GetPosition().y);
 	}
+
 
 	if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_DOWN)
 	{
@@ -136,6 +142,7 @@ update_status ModulePlayer::Update()
 		position.y = 1;
 		
 	}
+
 
 	if (plBody2 != nullptr)
 	{

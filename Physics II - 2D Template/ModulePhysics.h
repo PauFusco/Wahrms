@@ -7,8 +7,7 @@
 // Define Physics Globals here
 #define GRAVITY_X 0.0f
 
-#define GRAVITY_Y 10.0f
-
+#define GRAVITY_Y 20.0f
 
 
 // Meters to pixels and reverse (transformation and coeficient)
@@ -57,6 +56,29 @@ enum class ColliderType
 	UNKNOWN
 };
 
+enum class IntegrationMethod
+{
+	IMPLICIT_EULER,
+	SYMPLECTIC_EULER,
+	VELOCITY_VERLET,
+	UNKNOWN
+};
+
+enum class DeltaTimeScheme
+{
+	FIXED,
+	VARIABLE,
+	SEMI_FIXED,
+	UNKNOWN
+};
+
+enum class CollisionMethod
+{
+	NO_ADJUSTMENT,
+	NORMAL_VEC_TELEPORT,
+	SUBSTEPPING,
+	UNKNOWN
+};
 
 enum class IntegrationMethod
 {
@@ -89,6 +111,8 @@ public:
 	// Setters
 	void SetLinearVelocity(wVec2 v);
 	void SetPosition(p2Point<float> position);
+	void SetPrevPosition(p2Point<float> position);
+	void ApplyForce(wVec2 f);
 	
 	void SetWidth(int iwidth);
 	void SetHeight(int iheight);
@@ -100,6 +124,7 @@ public:
 	unsigned int GetMass();
 
 	p2Point<float> GetPosition();
+	p2Point<float> GetPrevPosition();
 	
 	int GetWidth();
 	int GetHeight();
@@ -118,10 +143,16 @@ public:
 	// Gravity, bounce, friction, drag, total
 	wVec2 gF = wVec2(0, 0), bF = wVec2(0, 0),
 		  fF = wVec2(0, 0), dF = wVec2(0, 0),
-		  tF = wVec2(0, 0);
+
+		  tF = wVec2(0, 0), iF = wVec2(0, 0);
+
 
 
 	bool IsCollisionListener = false;
+
+
+	bool applyfF = false;
+
 
 private:
 	int width, height;
@@ -129,6 +160,7 @@ private:
 	unsigned int elasticCoef = 1;
 	float restitution = 1;
 	p2Point<float> bPos; // Position in meters
+	p2Point<float> prevPos;
 	wVec2 speed;
 
 };
@@ -146,8 +178,13 @@ public:
 	wBody* floorBody;
 	
 	wVec2 gravity = wVec2(GRAVITY_X, GRAVITY_Y);
-	float frictionCoef;
 
+	wVec2 auxGravity;
+	
+	float dragCoef;
+	
+
+	float frictionCoef;
 };
 
 class ModulePhysics : public Module
@@ -172,23 +209,33 @@ public:
 
 	void destroyBody(wBody* body);
 
-	void CreateFloor(); // Create rectangle on the bottom on the screen and put it in the list (use class??)
+
+	void CreateFloor(); // Create rectangle on the bottom on
+						// the screen and put it in the list (use class??)
 
 	void integrator();
+
+	void debugKeys();
+
 
 	void printDebugInfo();
 
 
 	float fps = 60.0;
 	float dt = 1 / fps;
+
+
+	int steps = 6;
+	int frames = 0;
 	
-	DeltaTimeScheme dtScheme = DeltaTimeScheme::FIXED;
+	DeltaTimeScheme dtScheme = DeltaTimeScheme::SEMI_FIXED;
+	CollisionMethod Cmethod = CollisionMethod::NO_ADJUSTMENT;
+
+
 
 private:
 	p2List<wBody*>* Bodies;
 	bool debug = true;
-
-
 
 
 	Floor* floor;
@@ -203,10 +250,22 @@ private:
 	const char* gravChar;
 
 
+
+	const char* dragChar;
+
 	
+	const char* fricChar;
+
+
 	char* schemeCharf = "FIXED DELTA TIME <";
 	char* schemeCharv = "VARIABLE DELTA TIME <";
-	char* schemeCharsf = "SEMI-FIXED DELTA TIME <";
+	char* schemeCharsf = "SEMI_FIXED DELTA TIME <";
 
 	const char* frametimeChar;
+
+
+	char* colCharna = "NO ADJUSTMENT <";
+	char* colCharvt = "NORMAL_VECTOR TELEPORT <";
+	char* colChars = "SUBSTEPPING <";
+
 };
