@@ -34,7 +34,7 @@ bool ModulePlayer::Start()
 
 	position.x = 8;
 	//plBody2 = App->physics->CreateCircle(3, position);
-	
+
 	return true;
 }
 
@@ -49,126 +49,138 @@ bool ModulePlayer::CleanUp()
 // Update: draw background
 update_status ModulePlayer::Update()
 {
-
-	if (isTurn)
+	if (HP > 0)
 	{
-		if (App->input->GetKey(SDL_SCANCODE_D) == KEY_DOWN)
+		if (isTurn)
 		{
-			wVec2 vel;
-			vel.y = 0;
-			vel.x = 5;
-			plBody->SetLinearVelocity(vel);
-		}
-		if (App->input->GetKey(SDL_SCANCODE_A) == KEY_DOWN)
-		{
-			wVec2 vel;
-			vel.y = 0;
-			vel.x = -5;
-			plBody->SetLinearVelocity(vel);
-		}
-		if (App->input->GetKey(SDL_SCANCODE_W) == KEY_DOWN)
-		{
-			wVec2 vel;
-			vel.y = -100;
-			vel.x = 0;
-			//plBody->SetLinearVelocity(vel);
-			plBody->ApplyForce(vel);
-		}
-		if (App->input->GetKey(SDL_SCANCODE_S) == KEY_DOWN)
-		{
-			wVec2 vel;
-			vel.y = 5;
+			if (App->input->GetKey(SDL_SCANCODE_D) == KEY_DOWN)
+			{
+				wVec2 vel;
+				vel.y = 0;
+				vel.x = 5;
+				plBody->SetLinearVelocity(vel);
+			}
+			if (App->input->GetKey(SDL_SCANCODE_A) == KEY_DOWN)
+			{
+				wVec2 vel;
+				vel.y = 0;
+				vel.x = -5;
+				plBody->SetLinearVelocity(vel);
+			}
+			if (App->input->GetKey(SDL_SCANCODE_W) == KEY_DOWN)
+			{
+				wVec2 vel;
+				vel.y = -100;
+				vel.x = 0;
+				//plBody->SetLinearVelocity(vel);
+				plBody->ApplyForce(vel);
+			}
+			if (App->input->GetKey(SDL_SCANCODE_S) == KEY_DOWN)
+			{
+				wVec2 vel;
+				vel.y = 5;
 
-			vel.x = 0;
-			plBody->SetLinearVelocity(vel);
+				vel.x = 0;
+				plBody->SetLinearVelocity(vel);
+			}
+			//if (App->input->GetKey(SDL_SCANCODE_V) == KEY_DOWN)
+			//{
+			//	LOG("The x velocity is: %f", plBody->GetSpeed().x);
+			//	LOG("The y velocity is: %f", plBody->GetSpeed().y);
+			//	LOG("X %f", plBody->GetPosition().x);
+			//	LOG("Y %f", plBody->GetPosition().y);
+			//}
+
+
+			if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
+			{
+				if (strength < 65)	strength++;
+			}
+			if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT)
+			{
+				if (strength > -65)	strength--;
+			}
+			if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT)
+			{
+				angle++;
+
+				if (angle > 359) {
+
+					angle = 0;
+
+				}
+			}
+			if (App->input->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)
+			{
+				angle--;
+
+				if (angle < 0) {
+
+					angle = 359;
+
+				}
+			}
+
+			if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
+			{
+				wVec2 vel;
+				vel.x = strength * cos(DEGTORAD * angle);
+				vel.y = strength * sin(DEGTORAD * angle);
+
+				p2Point<float> pos;
+				pos.x = plBody->GetPosition().x;
+				pos.y = plBody->GetPosition().y;
+				pos.y -= 4;
+
+				circles.add(App->physics->CreateCircle(1, pos));
+
+				circles.getLast()->data->ctype = ColliderType::BULLET;
+
+				circles.getLast()->data->IsCollisionListener = true;
+				circles.getLast()->data->SetRestitution(0.9);
+
+				circles.getLast()->data->SetLinearVelocity(vel);
+
+				isTurn = false;
+			}
+
+
+			// Bullet trajectory line
+			p2Point<float> line_Start;
+			line_Start.x = METERS_TO_PIXELS(plBody->GetPosition().x);
+			line_Start.y = METERS_TO_PIXELS(plBody->GetPosition().y);
+			line_Start.y -= 200;
+			p2Point<float> line_End;
+			line_End.x = line_Start.x + strength * cos(DEGTORAD * angle);
+			line_End.y = line_Start.y + strength * sin(DEGTORAD * angle);
+
+			App->renderer->DrawLine(line_Start.x, line_Start.y, line_End.x, line_End.y, 255, 255, 255, 255);
+
 		}
-		//if (App->input->GetKey(SDL_SCANCODE_V) == KEY_DOWN)
-		//{
-		//	LOG("The x velocity is: %f", plBody->GetSpeed().x);
-		//	LOG("The y velocity is: %f", plBody->GetSpeed().y);
-		//	LOG("X %f", plBody->GetPosition().x);
-		//	LOG("Y %f", plBody->GetPosition().y);
-		//}
-
-
-		if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
+		else
 		{
-			if (strength < 65)	strength++;
-		}
-		if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT)
-		{
-			if (strength > -65)	strength--;
-		}
-		if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT)
-		{
-			angle++;
-
-			if (angle > 359) {
-
-				angle = 0;
-
+			if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
+			{
+				isTurn = true;
 			}
 		}
-		if (App->input->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)
+
+		if (!App->physics->debug)
 		{
-			angle--;
+			p2Point<int> renderPos;
+			renderPos.x = METERS_TO_PIXELS(plBody->GetPosition().x - plBody->GetWidth());
+			renderPos.y = METERS_TO_PIXELS(plBody->GetPosition().y - plBody->GetWidth());
 
-			if (angle < 0) {
-
-				angle = 359;
-
-			}
+			App->renderer->Blit(pltex, renderPos.x, renderPos.y);
 		}
-
-		if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
-		{
-			wVec2 vel;
-			vel.x = strength * cos(DEGTORAD * angle);
-			vel.y = strength * sin(DEGTORAD * angle);
-
-			p2Point<float> pos;
-			pos.x = plBody->GetPosition().x;
-			pos.y = plBody->GetPosition().y;
-			pos.y -= 4;
-
-			circles.add(App->physics->CreateCircle(1, pos));
-
-			circles.getLast()->data->ctype = ColliderType::BULLET;
-
-			circles.getLast()->data->IsCollisionListener = true;
-			circles.getLast()->data->SetRestitution(0.9);
-
-			circles.getLast()->data->SetLinearVelocity(vel);
-
-			isTurn = false;
-		}
-
-
-		// Bullet trajectory line
-		p2Point<float> line_Start;
-		line_Start.x = METERS_TO_PIXELS(plBody->GetPosition().x);
-		line_Start.y = METERS_TO_PIXELS(plBody->GetPosition().y);
-		line_Start.y -= 200;
-		p2Point<float> line_End;
-		line_End.x = line_Start.x + strength * cos(DEGTORAD*angle);
-		line_End.y = line_Start.y + strength * sin(DEGTORAD*angle);
-
-		App->renderer->DrawLine(line_Start.x, line_Start.y, line_End.x, line_End.y, 255, 255, 255, 255);
+		
 
 	}
-	else
+
+	if (HP <= 0 && alive)
 	{
-		if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
-		{
-			isTurn = true;
-		}
-	}
-
-	if (HP <= 0) {
-		App->renderer->DrawCircle(METERS_TO_PIXELS(plBody->GetPosition().x),
-								  METERS_TO_PIXELS(plBody->GetPosition().y),
-								  plBody->GetHeight() / 2,
-								  255, 0, 0, 122);
+		App->physics->destroyBody(plBody);
+		alive = false;
 	}
 
 	if (DestroyBullet)
@@ -187,12 +199,14 @@ update_status ModulePlayer::Update()
 
 	}
 
-	if (!App->physics->debug) {
-		p2Point<int> renderPos;
-		renderPos.x = METERS_TO_PIXELS(plBody->GetPosition().x - plBody->GetWidth());
-		renderPos.y = METERS_TO_PIXELS(plBody->GetPosition().y - plBody->GetWidth());
 
-		App->renderer->Blit(pltex, renderPos.x, renderPos.y);
+	if (!App->physics->debug)
+	{
+		p2Point<int> renderPos;
+		//renderPos.x = METERS_TO_PIXELS(plBody->GetPosition().x - plBody->GetWidth());
+		//renderPos.y = METERS_TO_PIXELS(plBody->GetPosition().y - plBody->GetWidth());
+
+
 
 
 		p2List_item<wBody*>* bullet;
@@ -204,5 +218,7 @@ update_status ModulePlayer::Update()
 			App->renderer->Blit(balltex, renderPos.x, renderPos.y);
 		}
 	}
+	
+
 	return UPDATE_CONTINUE;
 }
