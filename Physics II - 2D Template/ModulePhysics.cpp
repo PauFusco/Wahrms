@@ -31,7 +31,9 @@ bool ModulePhysics::Start()
 
 	CreateFloor();
 
-	floor->dragCoef = 0.5, floor->frictionCoef = 0.2;
+
+	floor->dragCoef = 0.1, floor->frictionCoef = 0.4;
+
 
 	return true;
 }
@@ -256,7 +258,7 @@ void ModulePhysics::debugKeys()
 	}
 	if (App->input->GetKey(SDL_SCANCODE_I) == KEY_DOWN)
 	{
-		floor->dragCoef -= 0.1f;
+		if (floor->dragCoef > 0.1) floor->dragCoef -= 0.1f;
 	}
 
 
