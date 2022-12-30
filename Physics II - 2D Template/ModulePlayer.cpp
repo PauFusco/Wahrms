@@ -113,6 +113,20 @@ update_status ModulePlayer::Update()
 		wVec2 vel;
 		vel.x = strength * cos(angle * DEGTORAD);
 		vel.y = strength * sin(angle * DEGTORAD);
+
+		p2Point<float> pos;
+		pos.x = plBody->GetPosition().x;
+		pos.y = plBody->GetPosition().y;
+		pos.y -= 4;
+
+		circles.add(App->physics->CreateCircle(1, pos));
+
+		
+
+		circles.getLast()->data->IsCollisionListener = true;
+		circles.getLast()->data->SetRestitution(0.9);
+
+		circles.getLast()->data->SetLinearVelocity(vel);
 	}
 
 	if (plBody2 == nullptr)

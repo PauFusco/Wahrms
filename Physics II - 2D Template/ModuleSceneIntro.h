@@ -54,8 +54,8 @@ public:
 
 	p2DynArray<Light> lights;
 
-	ModulePlayer player1;
-	ModulePlayer player2;
+	//ModulePlayer player1;
+	//ModulePlayer player2;
 
 	uint player_lose_fx;
 };
