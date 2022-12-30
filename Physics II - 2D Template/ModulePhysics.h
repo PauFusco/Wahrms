@@ -221,7 +221,7 @@ public:
 	
 	DeltaTimeScheme dtScheme = DeltaTimeScheme::SEMI_FIXED;
 	CollisionMethod Cmethod = CollisionMethod::NO_ADJUSTMENT;
-
+	
 
 
 private:
@@ -253,7 +253,7 @@ private:
 	char* schemeCharsf = "SEMI_FIXED DELTA TIME <";
 
 	const char* frametimeChar;
-
+	const char* dtChar;
 
 	char* colCharna = "NO ADJUSTMENT <";
 	char* colCharvt = "NORMAL_VECTOR TELEPORT <";

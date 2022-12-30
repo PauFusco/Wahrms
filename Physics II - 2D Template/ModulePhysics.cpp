@@ -142,21 +142,28 @@ void ModulePhysics::printDebugInfo()
 	frametimeChar = temp.c_str();
 
 	App->fonts->BlitText(0, 45, 0, "ACTUAL FPS;");
-	App->fonts->BlitText(130, 45, 0, frametimeChar);
+	App->fonts->BlitText(100, 45, 0, frametimeChar);
+
+
+	// Delta time debug
+	temp = to_string(dt);
+	dtChar = temp.c_str();
+	App->fonts->BlitText(0, 60, 0, "ACTUAL DELTA TIME;");
+	App->fonts->BlitText(160, 60, 0, dtChar);
 
 
 	// Integration Method debug
-	App->fonts->BlitText(0, 75, 0, "INTEGRATION METHOD;");
+	App->fonts->BlitText(0, 90, 0, "INTEGRATION METHOD;");
 	switch (IntMeth)
 	{
 	case(IntegrationMethod::IMPLICIT_EULER):
-		App->fonts->BlitText(160, 75, 0, methCharie);
+		App->fonts->BlitText(160, 90, 0, methCharie);
 		break;
 	case(IntegrationMethod::SYMPLECTIC_EULER):
-		App->fonts->BlitText(160, 75, 0, methCharse);
+		App->fonts->BlitText(160, 90, 0, methCharse);
 		break;
 	case(IntegrationMethod::VELOCITY_VERLET):
-		App->fonts->BlitText(160, 75, 0, methCharvv);
+		App->fonts->BlitText(160, 90, 0, methCharvv);
 		break;
 	}
 
@@ -165,24 +172,24 @@ void ModulePhysics::printDebugInfo()
 	temp = to_string(floor->gravity.y);
 	gravChar = temp.c_str();
 	
-	App->fonts->BlitText(0, 105, 0, "ACTUAL GRAVITY;");
-	App->fonts->BlitText(130, 105, 0, gravChar);
+	App->fonts->BlitText(0, 120, 0, "ACTUAL GRAVITY;");
+	App->fonts->BlitText(130, 120, 0, gravChar);
 
 
 	// Drag Coefficient debug
 	temp = to_string(floor->dragCoef);
 	dragChar = temp.c_str();
 
-	App->fonts->BlitText(0, 135, 0, "DRAG COEFFICIENT;");
-	App->fonts->BlitText(150, 135, 0, dragChar);
+	App->fonts->BlitText(0, 150, 0, "DRAG COEFFICIENT;");
+	App->fonts->BlitText(150, 150, 0, dragChar);
 
 
 	// Friction Coefficient debug
 	temp = to_string(floor->frictionCoef);
 	fricChar = temp.c_str();
 
-	App->fonts->BlitText(0, 165, 0, "FRICTION COEFFICIENT;");
-	App->fonts->BlitText(180, 165, 0, fricChar);
+	App->fonts->BlitText(0, 180, 0, "FRICTION COEFFICIENT;");
+	App->fonts->BlitText(180, 180, 0, fricChar);
 }
 
 void ModulePhysics::debugKeys()
@@ -311,12 +318,6 @@ bool ModulePhysics::CleanUp()
 
 	Bodies->clear();
 	delete Bodies;
-
-	//p2List_item<wBody*>* bodies;
-	//for (bodies = Bodies->getFirst(); bodies != NULL; bodies = bodies->next)
-	//{
-	//	Bodies->del(bodies);
-	//}
 
 	return true;
 }
