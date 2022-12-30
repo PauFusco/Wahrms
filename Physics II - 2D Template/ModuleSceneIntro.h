@@ -1,6 +1,7 @@
 #pragma once
 #include "Module.h"
 #include "Animation.h"
+#include "ModulePlayer.h"
 #include "p2DynArray.h"
 #include "Globals.h"
 
@@ -52,6 +53,9 @@ public:
 	uint fx_light_big;
 
 	p2DynArray<Light> lights;
+
+	//ModulePlayer player1;
+	//ModulePlayer player2;
 
 	uint player_lose_fx;
 };

@@ -6,7 +6,9 @@
 
 // Define Physics Globals here
 #define GRAVITY_X 0.0f
+
 #define GRAVITY_Y 20.0f
+
 
 // Meters to pixels and reverse (transformation and coeficient)
 #define PIXELS_PER_METER 50.0f // if touched change METER_PER_PIXEL too
@@ -78,6 +80,26 @@ enum class CollisionMethod
 	UNKNOWN
 };
 
+enum class IntegrationMethod
+{
+	IMPLICIT_EULER,
+	SYMPLECTIC_EULER,
+	VELOCITY_VERLET,
+	UNKNOWN
+};
+
+enum class DeltaTimeScheme
+{
+	FIXED,
+	VARIABLE,
+	SEMI_FIXED,
+
+
+
+	UNKNOWN
+};
+
+
 // Collider of a wBody is itself
 class wBody
 {
@@ -121,12 +143,16 @@ public:
 	// Gravity, bounce, friction, drag, total
 	wVec2 gF = wVec2(0, 0), bF = wVec2(0, 0),
 		  fF = wVec2(0, 0), dF = wVec2(0, 0),
+
 		  tF = wVec2(0, 0), iF = wVec2(0, 0);
+
 
 
 	bool IsCollisionListener = false;
 
+
 	bool applyfF = false;
+
 
 private:
 	int width, height;
@@ -152,10 +178,12 @@ public:
 	wBody* floorBody;
 	
 	wVec2 gravity = wVec2(GRAVITY_X, GRAVITY_Y);
+
 	wVec2 auxGravity;
 	
 	float dragCoef;
 	
+
 	float frictionCoef;
 };
 
@@ -181,6 +209,7 @@ public:
 
 	void destroyBody(wBody* body);
 
+
 	void CreateFloor(); // Create rectangle on the bottom on
 						// the screen and put it in the list (use class??)
 
@@ -188,11 +217,13 @@ public:
 
 	void debugKeys();
 
+
 	void printDebugInfo();
 
 
 	float fps = 60.0;
 	float dt = 1 / fps;
+
 
 	int steps = 6;
 	int frames = 0;
@@ -201,9 +232,11 @@ public:
 	CollisionMethod Cmethod = CollisionMethod::NO_ADJUSTMENT;
 
 
+
 private:
 	p2List<wBody*>* Bodies;
 	bool debug = true;
+
 
 	Floor* floor;
 
@@ -215,6 +248,7 @@ private:
 
 
 	const char* gravChar;
+
 
 
 	const char* dragChar;
@@ -233,4 +267,5 @@ private:
 	char* colCharna = "NO ADJUSTMENT <";
 	char* colCharvt = "NORMAL_VECTOR TELEPORT <";
 	char* colChars = "SUBSTEPPING <";
+
 };
