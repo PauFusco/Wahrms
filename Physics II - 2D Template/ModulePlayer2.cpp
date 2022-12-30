@@ -186,22 +186,22 @@ update_status ModulePlayer2::Update()
 
 	}
 
+	if(!App->physics->debug) {
+		p2Point<int> renderPos;
+		renderPos.x = METERS_TO_PIXELS(plBody->GetPosition().x - plBody->GetWidth());
+		renderPos.y = METERS_TO_PIXELS(plBody->GetPosition().y - plBody->GetWidth());
 
-	p2Point<int> renderPos;
-	renderPos.x = METERS_TO_PIXELS(plBody->GetPosition().x - plBody->GetWidth());
-	renderPos.y = METERS_TO_PIXELS(plBody->GetPosition().y - plBody->GetWidth());
-
-	App->renderer->Blit(pltex, renderPos.x, renderPos.y);
+		App->renderer->Blit(pltex, renderPos.x, renderPos.y);
 
 
-	p2List_item<wBody*>* bullet;
-	for (bullet = circles.getFirst(); bullet != NULL; bullet = bullet->next)
-	{
-		renderPos.x = METERS_TO_PIXELS(bullet->data->GetPosition().x - bullet->data->GetWidth());
-		renderPos.y = METERS_TO_PIXELS(bullet->data->GetPosition().y - bullet->data->GetWidth());
+		p2List_item<wBody*>* bullet;
+		for (bullet = circles.getFirst(); bullet != NULL; bullet = bullet->next)
+		{
+			renderPos.x = METERS_TO_PIXELS(bullet->data->GetPosition().x - bullet->data->GetWidth());
+			renderPos.y = METERS_TO_PIXELS(bullet->data->GetPosition().y - bullet->data->GetWidth());
 
-		App->renderer->Blit(balltex, renderPos.x, renderPos.y);
+			App->renderer->Blit(balltex, renderPos.x, renderPos.y);
+		}
 	}
-
 	return UPDATE_CONTINUE;
 }

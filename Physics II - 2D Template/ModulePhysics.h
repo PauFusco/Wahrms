@@ -226,11 +226,11 @@ public:
 	DeltaTimeScheme dtScheme = DeltaTimeScheme::SEMI_FIXED;
 	CollisionMethod Cmethod = CollisionMethod::NORMAL_VEC_TELEPORT;
 	
-
+	bool debug = false;
 
 private:
 	p2List<wBody*>* Bodies;
-	bool debug = true;
+	
 
 
 	Floor* floor;

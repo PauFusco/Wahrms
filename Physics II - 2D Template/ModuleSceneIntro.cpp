@@ -56,8 +56,9 @@ bool ModuleSceneIntro::CleanUp()
 // Update: draw background
 update_status ModuleSceneIntro::Update()
 {
-	App->renderer->Blit(graphics, 0, 0);
-
+	if (!App->physics->debug) {
+		App->renderer->Blit(graphics, 0, 0);
+	}
 
 	return UPDATE_CONTINUE;
 }
