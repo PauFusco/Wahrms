@@ -45,4 +45,7 @@ public:
 
 	SDL_Texture* pltex;
 
+	const char* bulltexchar = "Assets/Wahssets/Ball.png";
+
+	SDL_Texture* balltex;
 };

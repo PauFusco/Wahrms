@@ -28,6 +28,7 @@ bool ModulePlayer2::Start()
 	plBody->ctype = ColliderType::PLAYER2;
 
 	pltex = App->textures->Load(pltexchar);
+	balltex = App->textures->Load(bulltexchar);
 
 	position.x = 8;
 	//plBody2 = App->physics->CreateCircle(3, position);
@@ -192,6 +193,15 @@ update_status ModulePlayer2::Update()
 
 	App->renderer->Blit(pltex, renderPos.x, renderPos.y);
 
+
+	p2List_item<wBody*>* bullet;
+	for (bullet = circles.getFirst(); bullet != NULL; bullet = bullet->next)
+	{
+		renderPos.x = METERS_TO_PIXELS(bullet->data->GetPosition().x - bullet->data->GetWidth());
+		renderPos.y = METERS_TO_PIXELS(bullet->data->GetPosition().y - bullet->data->GetWidth());
+
+		App->renderer->Blit(balltex, renderPos.x, renderPos.y);
+	}
 
 	return UPDATE_CONTINUE;
 }
