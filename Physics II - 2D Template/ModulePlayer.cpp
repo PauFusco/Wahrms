@@ -22,7 +22,7 @@ bool ModulePlayer::Start()
 
 	plBody = App->physics->CreateCircle(2, position);
 	plBody->IsCollisionListener = true;
-	plBody->SetRestitution(0.9);
+	plBody->SetRestitution(0.6);
 
 	position.x = 8;
 	//plBody2 = App->physics->CreateCircle(3, position);
@@ -60,9 +60,10 @@ update_status ModulePlayer::Update()
 	if (App->input->GetKey(SDL_SCANCODE_UP) == KEY_DOWN)
 	{
 		wVec2 vel;
-		vel.y = -5;
+		vel.y = -100;
 		vel.x = 0;
-		plBody->SetLinearVelocity(vel);
+		//plBody->SetLinearVelocity(vel);
+		plBody->ApplyForce(vel);
 	}
 	if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_DOWN)
 	{

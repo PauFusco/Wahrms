@@ -31,7 +31,9 @@ bool ModulePhysics::Start()
 
 	CreateFloor();
 
+
 	floor->dragCoef = 0.1, floor->frictionCoef = 0.4;
+
 
 	return true;
 }
@@ -727,10 +729,12 @@ void ModulePhysics::integrator()
 
 
 			float tFx = bodies->data->gF.x + bodies->data->bF.x +
-						bodies->data->fF.x + bodies->data->dF.x;
+						bodies->data->fF.x + bodies->data->dF.x +
+						bodies->data->iF.x;
 			
 			float tFy = bodies->data->gF.y + bodies->data->bF.y +
-						bodies->data->fF.y + bodies->data->dF.y;
+						bodies->data->fF.y + bodies->data->dF.y +
+						bodies->data->iF.y;
 			
 			wVec2 aF = wVec2(tFx / bodyMass, tFy / bodyMass);
 
@@ -784,6 +788,8 @@ void ModulePhysics::integrator()
 			bodies->data->SetLinearVelocity(actualVelocity);
 
 			bodies->data->fF.x = 0;
+			bodies->data->iF.x = 0;
+			bodies->data->iF.y = 0;
 		}	
 	}
 }
@@ -854,6 +860,11 @@ void wBody::SetPosition(p2Point<float> position)
 void wBody::SetPrevPosition(p2Point<float> position)
 {
 	prevPos = position;
+}
+void wBody::ApplyForce(wVec2 f)
+{
+	iF.x += METERS_TO_PIXELS(f.x);
+	iF.y += METERS_TO_PIXELS(f.y);
 }
 unsigned int wBody::GetMass()
 {
