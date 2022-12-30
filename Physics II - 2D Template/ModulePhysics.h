@@ -61,6 +61,8 @@ enum class IntegrationMethod
 	IMPLICIT_EULER,
 	SYMPLECTIC_EULER,
 	VELOCITY_VERLET,
+
+
 	UNKNOWN
 };
 
@@ -69,6 +71,8 @@ enum class DeltaTimeScheme
 	FIXED,
 	VARIABLE,
 	SEMI_FIXED,
+
+
 	UNKNOWN
 };
 
@@ -77,27 +81,14 @@ enum class CollisionMethod
 	NO_ADJUSTMENT,
 	NORMAL_VEC_TELEPORT,
 	SUBSTEPPING,
-	UNKNOWN
-};
-
-enum class IntegrationMethod
-{
-	IMPLICIT_EULER,
-	SYMPLECTIC_EULER,
-	VELOCITY_VERLET,
-	UNKNOWN
-};
-
-enum class DeltaTimeScheme
-{
-	FIXED,
-	VARIABLE,
-	SEMI_FIXED,
-
 
 
 	UNKNOWN
 };
+
+
+
+
 
 
 // Collider of a wBody is itself

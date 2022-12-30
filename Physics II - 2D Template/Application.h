@@ -55,8 +55,7 @@ private:
 	void AddModule(Module* mod);
 
 
-	steady_clock::time_point start_time;
-	steady_clock::time_point end_time;
-	long long frame_time;
+
+
 
 };
