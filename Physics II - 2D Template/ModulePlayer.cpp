@@ -22,7 +22,9 @@ bool ModulePlayer::Start()
 
 	plBody = App->physics->CreateCircle(2, position);
 	plBody->IsCollisionListener = true;
+
 	plBody->SetRestitution(0.6);
+
 
 	position.x = 8;
 	//plBody2 = App->physics->CreateCircle(3, position);
@@ -43,21 +45,22 @@ update_status ModulePlayer::Update()
 {
 
 
-	if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_DOWN)
+
+	if (App->input->GetKey(SDL_SCANCODE_D) == KEY_DOWN)
 	{
 		wVec2 vel;
 		vel.y = 0;
 		vel.x = 5;
 		plBody->SetLinearVelocity(vel);
 	}
-	if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_DOWN)
+	if (App->input->GetKey(SDL_SCANCODE_A) == KEY_DOWN)
 	{
 		wVec2 vel;
 		vel.y = 0;
 		vel.x = -5;
 		plBody->SetLinearVelocity(vel);
 	}
-	if (App->input->GetKey(SDL_SCANCODE_UP) == KEY_DOWN)
+	if (App->input->GetKey(SDL_SCANCODE_W) == KEY_DOWN)
 	{
 		wVec2 vel;
 		vel.y = -100;
@@ -65,10 +68,11 @@ update_status ModulePlayer::Update()
 		//plBody->SetLinearVelocity(vel);
 		plBody->ApplyForce(vel);
 	}
-	if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_DOWN)
+	if (App->input->GetKey(SDL_SCANCODE_S) == KEY_DOWN)
 	{
 		wVec2 vel;
 		vel.y = 5;
+
 		vel.x = 0;
 		plBody->SetLinearVelocity(vel);
 	}
@@ -81,49 +85,64 @@ update_status ModulePlayer::Update()
 	}
 
 
+	if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_DOWN)
+	{
+		strength++;
+	}
+	if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_DOWN)
+	{
+		strength--;
+	}
+	if (App->input->GetKey(SDL_SCANCODE_UP) == KEY_DOWN)
+	{
+		angle++;
+
+		if (angle >= 360) {
+
+			angle = 0;
+
+		}
+	}
+	if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_DOWN)
+	{
+		angle--;
+
+		if (angle < 0) {
+
+			angle = 359;
+
+		}
+	}
+
+	if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
+	{
+		wVec2 vel;
+		vel.x = strength * cos(angle * DEGTORAD);
+		vel.y = strength * sin(angle * DEGTORAD);
+
+		p2Point<float> pos;
+		pos.x = plBody->GetPosition().x;
+		pos.y = plBody->GetPosition().y;
+		pos.y -= 4;
+
+		circles.add(App->physics->CreateCircle(1, pos));
+
+		
+
+		circles.getLast()->data->IsCollisionListener = true;
+		circles.getLast()->data->SetRestitution(0.9);
+
+		circles.getLast()->data->SetLinearVelocity(vel);
+	}
+
 	if (plBody2 == nullptr)
 	{
 		p2Point<float> position;
 		position.x = 5;
 		position.y = 1;
-
-
-		if (App->input->GetKey(SDL_SCANCODE_D) == KEY_DOWN)
-		{
-			plBody2 = App->physics->CreateCircle(1, position);
-			wVec2 vel;
-			vel.y = 0;
-			vel.x = 50;
-			plBody2->SetLinearVelocity(vel);
-		}
-		if (App->input->GetKey(SDL_SCANCODE_A) == KEY_DOWN)
-		{
-			plBody2 = App->physics->CreateCircle(3, position);
-			wVec2 vel;
-			vel.y = 0;
-			vel.x = -50;
-			plBody2->SetLinearVelocity(vel);
-		}
-		if (App->input->GetKey(SDL_SCANCODE_W) == KEY_DOWN)
-		{
-			plBody2 = App->physics->CreateCircle(1, position);
-			wVec2 vel;
-			vel.y = -0;
-			vel.x = 0;
-			plBody2->SetLinearVelocity(vel);
-		}
-		if (App->input->GetKey(SDL_SCANCODE_S) == KEY_DOWN)
-		{
-			plBody2 = App->physics->CreateCircle(3, position);
-			wVec2 vel;
-			vel.y = 50;
-			vel.x = 0;
-			plBody2->SetLinearVelocity(vel);
-		}
-
-		
 		
 	}
+
 
 	if (plBody2 != nullptr)
 	{

@@ -107,6 +107,7 @@ update_status Application::Update()
 	end_time = Clock::now();
 	frame_time = duration_cast<milliseconds>(end_time - start_time).count();
 	
+
 	if (physics->dtScheme == DeltaTimeScheme::SEMI_FIXED)
 	{
 		if (frame_time < (1.0 / physics->fps * 1000.0))
@@ -122,6 +123,7 @@ update_status Application::Update()
 	{
 		physics->dt = frame_time_TRUE / 1000.0;
 	}
+
 
 	//LOG("%d milliseconds", frame_time);
 	return ret;
